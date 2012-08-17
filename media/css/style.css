@@ -76,6 +76,7 @@ div.sidebar a.logo img{
  * Contenido
  */
 div.content{
+    border: solid 1px #CCC;
     line-height: 1.7em;
     width: 620px;
     background-color: #FFF;

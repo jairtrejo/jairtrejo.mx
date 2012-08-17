@@ -4,7 +4,7 @@
     <div class="content main-article alignright">
         <h1 class='article-title'>{{ page.title }}</h1>
         {% if page.subtitle %}<h2 class='article-subtitle'>{{ page.subtitle }}</h1>{% endif %}
-        <p class="metadata"><time pubdate>{{ page.created|date:"l d \de F \de Y"|capfirst }}</time></p>
+        <p class="metadata"><time pubdate>{{ page.created|date:"l d \d\e F \d\e Y"|capfirst }}</time></p>
         {% filter typogrify %}
         {% markdown %}
         {% block article %}

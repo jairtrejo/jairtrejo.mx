@@ -13,7 +13,7 @@
         {% with recents|first as post %}
         <h1 class="article-title">{{post.title}}</h1>
         {% if post.subtitle %}<h2 class='article-subtitle'>{{ post.subtitle }}</h1>{% endif %}
-    <p class="metadata">{{post.created|date:"l d \de F \de Y"|capfirst}}</p>
+    <p class="metadata">{{post.created|date:"l d \d\e F \d\e Y"|capfirst}}</p>
         {% if post.image %}
         <img src='{{site.url}}{{post.image}}' title={{post.title}} class='article-image centered'/>
         {% endif %}

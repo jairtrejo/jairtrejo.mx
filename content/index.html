@@ -1,0 +1,38 @@
+{% extends "skeleton/_body.html" %}
+{% hyde
+    title: "Blog"
+    created: 2010-12-29 14:30:00
+    listing: True
+%}
+
+{% block content_body %}
+{% recent_posts recents 4 %}
+
+<div class="content alignright">
+    <div class="main-article">
+        {% with recents|first as post %}
+        <h1 class="article-title">{{post.title}}</h1>
+        {% if post.subtitle %}<h2 class='article-subtitle'>{{ post.subtitle }}</h1>{% endif %}
+    <p class="metadata">{{post.created|date:"l d \de F \de Y"|capfirst}}</p>
+        {% if post.image %}
+        <img src='{{site.url}}{{post.image}}' title={{post.title}} class='article-image centered'/>
+        {% endif %}
+        {% render_excerpt post 1000 %}
+        <p class='keep-reading'><a href='{{post.url}}'>Seguir leyendo &rarr;</a></p>
+        {% endwith %}
+    </div>
+    {%for post in recents|slice:"1:" %}
+        <div class='article'>
+            <div class="alignleft">
+                <h1>{{post.title}}</h1>
+                {% if post.subtitle %}<h2 class='article-subtitle'>{{ post.subtitle }}</h1>{% endif %}
+                <p class="metadata">{{post.created|date:"l d \de F \de Y"|capfirst}}</p>
+            </div>
+            <div class="alignright">
+                <div class="excerpt">{% render_excerpt post 1000%}</div>
+            </div>
+            <p class='keep-reading'><a href='{{post.url}}'>Seguir leyendo &rarr;</a></p>
+        </div>
+    {%endfor%}
+</div>
+{% endblock %}

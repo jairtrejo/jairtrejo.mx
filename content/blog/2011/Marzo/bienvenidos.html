@@ -1,0 +1,124 @@
+{% extends "_post.html" %}
+{% load aym %}
+
+{% hyde
+    title: ¡Bienvenidos! 
+    created: 2011-03-19 13:23:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+
+Cuando empecé a aprender japonés, hace casi cuatro años, mi profesor nos pidió que escribiéramos en un papel por qué y para qué queríamos aprender el idioma. Una vez que terminamos, nos dijo:
+
+*"Cuando tengan flojera de venir a clases, o no quieran estudiar; cuando sientan que el idioma es muy difícil, o que les cuesta mucho trabajo; cuando sientan ganas de renunciar, lean ese papel. Seguramente les va a dar ánimos, pero si al leerlo sienten que sus razones ya no son ciertas, rompan el papelito y no vengan a perder su tiempo."*
+
+Considero entonces que vale la pena dejar escritos los paraqués, los porqués y de pilón los cómos de este blog.
+
+{% endexcerpt %}
+
+## ¿Para qué? ##
+
+Fundamentalmente, para contribuir a la conversación. Muchos son los que escriben sobre ciencia y tecnología, menos--aunque siguen siendo muchos--los que lo hacen en español, pero de todos modos siento que puedo aportar algunas perspectivas interesantes.
+
+En segundo lugar, para volver a sentir el placer de escribir, aplicado a asuntos sobre los que puedo hacerlo con relativa confianza.
+
+Y finalmente, para tener un vehículo de expresión profesional. Quiero tener un espacio para hablar de los temas relacionados directamente con mis intereses profesionales.
+
+## ¿Por qué? ##
+
+Desde 2006 he tenido tres blogs. El primero fracasó a los tres meses por falta de lectores. El segundo duró poco más de un año y me resultó enormemente satisfactorio: me "solté" escribiendo mucho, hice muchas amistades que aún hoy perduran y me despertó el gusto por escribir con frecuencia. El tercero fue casi una continuación del segundo y aunque con una audiencia menor en cantidad y diferente a la del segundo, me ha resultado igualmente satisfactorio.
+
+El tercer blog sigue activo, al menos en teoría, pero como ha sucedido con muchos otros Twitter lo ha reducido a la agonía. Para opinar de cualquier cosa, o para relatar o reflexionar sobre mi vida cotidiana, ha resultado un lugar más cómodo y más adecuado.
+
+Sin embargo, el gusanito de escribir no me abandonó, aunque la idea de repetir la fórmula pasada (blog personal donde el tema soy principalmente yo) no me convencía para nada. Así que fue tomando forma la idea de tener un blog más "serio", donde pudiera escribir sobre mis temas de interés, profundizando particularmente en la programación y en la mecatrónica. Pude haberlo hecho en el blog que ya tenía, pero hubo dos razones que me disuadieron. La primera, que el cambio de tema sería radical; antes rara vez hablaba de temas técnicos o científicos y la mayor parte de mis lectores no están relacionados o no les interesan esos temas. La segunda es que el blog personal está en Blogger, que a mi gusto es una plataforma que ha envejecido sin mucha gracia.
+
+Mientras esta idea me rondaba la cabeza, empecé también a [leer](http://www.codinghorror.com/blog/) [más](http://gilesbowkett.blogspot.com/) [blogs](http://nedbatchelder.com/blog/) sobre programación y diseño web que combinaban entradas frecuentes comentando noticias, compartiendo enlaces, etc. con el tutorial ocasional y con entradas más largas, escritas en clave de ensayo, sobre temas interesantes o controversiales. Lo que más me gusta de estos blogs es que los temas técnicos no sufren, sino que se enriquecen con el tratamiento desenfadado y subjetivo propio de los blogs personales.
+
+Me dieron muchas ganas de empezar un blog nuevo, pero los costos asociados (aprender a usar una nueva plataforma, escribir dos o tres entradas con anticipación, incluir el bloggeo en mi rutina, etc.) me detenían. Necesitaba un impulso grande para decidirme a vencer esos obstáculos.
+
+Los primeros empujones vinieron con varias preguntas en [Formspring](http://formspring.me) que me obligaron a escribir respuestas largas, lo cual disfruté mucho. Pero hubo una pregunta en particular cuya respuesta me tomó meses, y me generó tal deseo de compartirla que la idea de volver a bloggear se convirtió en proyecto.
+
+El empujón final fue hace un par de meses, cuando leí la [excelente primera parte](http://bartoszmilewski.wordpress.com/2011/01/09/monads-for-the-curious-programmer-part-1/) de una serie de artículos que [Bartosz Milewski](http://bartoszmilewski.wordpress.com/) está escribiendo sobre el tema de las Mónadas. Quedé tan admirado que tuitee, medio en broma medio en serio:
+
+>No cabe duda que bloggear, cuando se hace bien, es un acto de amor.
+
+Y es que poner tanto cuidado en escribir tan bien un artículo tan extenso sobre un tema tan difícil es una maravilla. Quisiera ser responsable, al menos de vez en cuando, de maravillas semejantes.
+
+## ¿Cómo? ##
+
+Rento este servidor desde hace más de un año y aunque me ha sido útil de vez en cuándo nunca lo había "exprimido" tanto como podría. Así que una vez que me decidí, empecé a buscar opciones para hospedar el blog por mi cuenta y a pulir los detalles técnicos.
+
+### Plataforma: [Hyde](http://ringce.com/hyde) ###
+
+Lo primero fue elegir una plataforma de blogging. La opción obvia era Wordpress, principalmente por mi buena experiencia administrando el sitio de [Distintas Latitudes](http://www.distintaslatitudes.net). Por las muchas modificaciones que he tenido que hacerle al tema de la revista, suponía que no habría mucha dificultad en crear uno propio. Leí [un tutorial muy sencillo](http://line25.com/tutorials/how-to-create-your-own-custom-wordpress-theme) sobre creación de temas y me emocioné bastante con la posibilidad, así que me puse a leer [lo que decía el Codex de Wordpress al respecto](http://codex.wordpress.org/Theme_Development).
+
+La verdad es que Wordpress es demasiado amplio y complicado para lo que tenía en mente. No quería comenzar el blog con una plantilla modificada, se sentía un poco como hacer trampa y desarrollar una desde cero no era tan simple como lo pensaba. O quizá sí, era simple, pero iba a tomar tiempo. Por otro lado, la operación del día a día puede resultar muy conveniente para un usuario no-técnico, pero para mí el dashboard sí es un poco una monserga. Y finalmente, el desarrollo tendría que ser en PHP, que es el lenguaje que uso en el trabajo y pues ya chole.
+
+Checando diferentes opciones, me encontré con [Jekyll](http://jekyllrb.com/). Jekyll es un generador de sitios estáticos, es decir, toma un conjunto de archivos de entrada (los textos de las entradas, plantillas, etc.) y genera un sitio web estático que puedes colgar en un servidor Apache con toda confianza.
+
+Jekyll está escrito en Ruby, pero hay un proyecto escrito en Python que está inspirado en él. Muy acertadamente se llama "Hyde", y al revisarlo se me hizo la opción ideal. Algo que me ayudó a decidirme es [este artículo](http://stevelosh.com/blog/2010/01/moving-from-django-to-hyde/) en el blog de [Steve Losh](stevelosh.com) sobre la conversión de su sitio de Django a Hyde. Este blog le debe mucho a aquel.
+
+Hyde tiene sus bemoles, pero los he sorteado con relativa facilidad. Hasta ahora lo que más me ha gustado es:
+
+* La generación de sitios estáticos. Que el sitio sea estático (léase sin procesamiento del lado del servidor) hace que consuma menos recursos, sea más rápido y prácticamente a prueba de fallos.
+* Lo simple del código necesario para crear el sitio. Basado en el "andamiaje" que crea automáticamente puedes tener el blog listo desde que "lo sacas del empaque". Lo que me tomó más tiempo fue el diseño, y luego el traslado del diseño a HTML+CSS; convertir el mockup a un conjunto de plantillas usables por Hyde fue pan comido.
+* Lo sencillísimo que es publicar. Usando el [fabfile](https://bitbucket.org/sjl/stevelosh/src/519599cdee45/fabfile.py) de Steve Losh con las modificaciones del caso, tuve el sitio funcionando en minutos. Escribir una nueva entrada se reduce a escribir un archivo de texto, "anotarlo" con la fecha y el título y ponerlo en la carpeta apropiada. De ahí un `fab regen` y un `fab publish` y mi entrada queda publicada.
+
+Y lo que no me ha gustado es:
+
+* Estoy usando la versión 0.5.3 de Hyde. En el repositorio de github dice que es la versión más completa y funcional, pero que la nueva versión está bajo desarrollo intenso. Cuando revisé el sitio de la versión más reciente me di de topes por estar usando la vieja, pero la instale y todavía tiene muchos errores, y la documentación está severamente incompleta. Espero que prospere, yo por lo pronto ya estoy leyendo el código a conciencia a ver si puedo aportar algo.
+
+* La versión de Hyde que estoy usando únicamente soporta templates de Django. Por momentos siento que estoy matando moscas con una bazooka.
+
+* Hay varios errorcitos aquí y allá. Uno de los más molestos es que tengo que modificar el archivo `.htaccess` que genera Hyde cuando quiero publicar mi sitio en un directorio diferente de `/`. Para que `misitio.com/jair` resuelva a `misitio.com/jair/index.html` le añado la regla:
+{% syntax apacheconf %}
+RewriteRule ^$ index.html
+{% endsyntax %}
+
+En general estoy contento. Además, Hyde es software libre, así que cualquier día de estos corrijo todo lo que me moleste. Por ejemplo, en la sección anterior se estaba insertando automáticamente una horrible línea en blanco al final, así que alteré el resaltado de sintaxis para que eliminara los espacios y saltos de línea alrededor del código antes de resaltarlo.
+
+### Comentarios: [Disqus](http://disqus.com/) ###
+
+Los comentarios en el blog fueron un dilema. Por un lado, ponerlos debajo de cadaa entrada no es necesariamente la mejor manera de generar una discusión útil sobre su contenido; nunca falta el troll o el comentario inane y en un espacio tan limitado es complicado separar la paja del trigo.
+
+La alternativa tradicional es esperar a que otras personas comenten en sus blogs respecto a mis entradas, pero eso supone una gran barrera para quien quiere hacer un aporte pequeño. Además, la naturaleza estática del sitio dificulta descubrir y enlazar a esas entradas por métodos como el&nbsp;[pingback](http://en.wikipedia.org/wiki/Pingback).
+
+Una opción más moderna es apostar por que se discutan las entradas en sitios de noticias, como [Reddit](http://reddit.com), [Hacker News](http://news.ycombinator.com/), etc. En los sitios de noticias generalmente hay un mecanismo de regulación de los comentarios que "esconden" los malos y destacan los buenos, además de que la presencia en en esos lugares traería más visitantes al blog. Sin embargo, esos foros son fundamentalmente angloparlantes y me parece que en México no hay mucha costumbre de frecuentarlos. Por otra parte, subir a esos sitios cada entrada que escriba sería de muy mala educación, y de nuevo está la barrera de tener que subir o buscar el enlace correspondiente a la entrada cada vez que se quiera hacer un comentario, por pequeño que sea.
+
+Al final decidí que en mi caso los beneficios de tener comentarios integrados sobrepasaban a los problemas. El problema era incorporar esa funcionalidad dinámica a mi sitio estático. Mi idea era tener una aplicación independiente en el servidor encargada de gestionar los comentarios, y un script que los mostrara dinámicamente en cada página.
+
+Sin embargo, ya existe un servicio público similar, [Disqus](http://disqus.com/). Me registré en el sitio, obtuve un Javascript que copié y pegué aquí, y listo, se puede comentar en mi blog. Además, el sistema mitiga muchos de los problemas asociados a los comentarios: provee un sistema de moderación, filtro anti-spam, login desde diversas redes sociales, etc. En general parece una solución muy atractiva, ya veremos con el tiempo cómo funciona.
+
+### Hospedaje: [Webfaction](http://webfaction.com) ###
+
+Como comentaba al principio de esta sección, rento espacio en éste servidor con Webfaction desde hace más de un año. Su servicio me gusta porque tienes acceso completo a tu máquina compartida a través de una cuenta ssh. No es root en un servidor virtualizado, pero es más que suficiente para cualquier cosa que he necesitado instalar o configurar, y por los $9.50 dólares mensuales que pago (podrían ser hasta $5.50 si pagara por adelantado) me dan 100 GB de espacio en disco, 500 GB de ancho de transferencia al mes y 80 MB libres de memoria para mis aplicaciones (y con libres quieren decir libres, la memoria que ocupa el sistema operativo no cuenta para este límite). Otro aspecto agradable es que configurar nuevas aplicaciones o instalar servicios populares (Wordpress, CherryPy, Django, Rails, etc.) es muy simple a través del panel de control.
+
+Además, cualquiera de esas prestaciones puede aumentarse instantáneamente si se necesita, pagando sólo por lo que vas a consumir.
+
+En este tiempo le he dado varios usos:
+
+* Como servidor git para un proyecto que desarrollé en colaboración con otra desarrolladora.
+* Como servidor web genérico para cuando necesitaba colgar un archivo para alguien más (antes de que se inventara [Dropbox](http://db.tt/BDFdoGI)).
+* Como servidor de aplicaciones PHP y Python (con [CherryPy](http://www.cherrypy.org/)) cuando necesité mostrárselas a mis clientes freelance.
+
+Y estoy más que satisfecho; así que me quedo con el bueno por conocido. Por cierto, si ustedes también quieren [contratar *hosting* en Webfaction](http://www.webfaction.com?affiliate=jtrejo) agradecería que lo hicieran a través de ese link, porque así me bonifican el 10% de lo que ustedes gasten con ellos.
+
+### Otras monerías ###
+
+Para la tipografía del blog quería algo diferente a las fuentes *websafe*, algo con más personalidad que Arial para el cuerpo y Georgia para los títulos. Para no estar sirviendo fuentes con `@font-face` desde mi servidor, busqué servicios externos; [TypeKit](http://typekit.com/) tiene una selección estupenda de fuentes para todos los gustos y es muy fácil de usar, pero de momento prefería probar con un servicio gratuito. Encontré [Google web fonts](http://www.google.com/webfonts) que tiene una selección de fuentes libres y gratuitas de alta calidad. Me decidí por [Lato](http://www.google.com/webfonts/family?family=Lato&subset=latin) para el texto, porque me pareció muy legible y moderna y [Yanone Kaffeesatz](http://www.yanone.de/typedesign/kaffeesatz/) para los títulos, porque es una fuente muy idiosincrática que siempre me ha gustado mucho. Me parece que la combinación sans-serif para el cuerpo con serif para los títulos siempre es una combinación ganadora.
+
+Hablando de tipografía, Hyde incorpora [Typogrify](http://code.google.com/p/typogrify/), que es "una colección de filtros para Django que ayudan a embellecer tu tipografía web." Entro otras cosas, impide la aparición de ["viudas"](http://es.wikipedia.org/wiki/Viuda_(l%C3%ADnea)), cambia las comillas "estándar" por comillas izquierda y derecha apropiadas, etc.
+
+También uso un poco de CSS3. En concreto, las esquinas redondeadas y la sombra alrededor de la caja que contiene a este texto están hechas con `border-radius` y `box-shadow`, respectivamente. Por desgracia no se ven en Internet Explorer (al menos en el siete, donde probé), pero eso se saca la gente por andar navegando con esas cosas. También tenía planeado usar Javascript para hacer unos efectos de "cambiar la página" al seleccionar una entrada, pero se me hizo demasiado.
+
+## En conclusión ##
+
+Me he divertido muchísimo poniendo a punto este blog y estoy lleno de entusiasmo por lo que está por venir. Espero que algo de esa diversión y ese entusiasmo pueda contagiarse a mis lectores a través de estas "páginas".
+
+{% endarticle %}
+
+{% endblock %}
+
+

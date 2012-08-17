@@ -1,0 +1,111 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "Una cucharadita de shell"
+    created: 2012-04-22 23:26:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+
+Estuve reorganizando [mis dotfiles](http://github.com/jairtrejo/dotfiles)
+y decidí incorporar mi carpeta de plugins y configuraciones de Vim (`~/.vim`)
+al repositorio. Utilizo [vim-pathogen](http://github.com/tpope/vim-pathogen)
+para manejar mis plugins, así que todos los instalé más o menos así:
+
+{% endexcerpt %}
+
+{% syntax bash %}
+$ cd ~/.vim/bundle
+$ git clone https://github.com/autor/plugin.git
+{% endsyntax %}
+
+Funcionaba perfectamente cuando todo estaba en una carpeta de Dropbox,
+*symlinkeado* a mi carpeta de inicio, pero dado que ahora quedará en un
+repositorio de git sería conveniente tener los plugins instalados como
+submódulos, que son subrepositorios dentro del principal.
+
+El primer paso es saber qué plugins instalé y desde dónde. Lo de menos es leer
+la lista de carpetas dentro de `~/.vim/bundle` y buscar uno por uno en github,
+pero ya lo hice en su momento y no hay necesidad de duplicar trabajo (y
+arriesgarme a instalarlos desde el repositorio equivocado). Otra opción es ir
+carpeta por carpeta ejecutando `git remote --verbose` y checando las
+URLs de los repositorios de origen.
+
+¿Se puede automatizar el proceso? Claro que sí; y todo sin salir del shell.
+Comencemos por ir a la carpeta de plugins (`cd ~/.vim/bundle`) y ejecutar:
+
+{% syntax bash %}
+$ ls | while read subm; do cd $subm && git remote --verbose | grep origin && cd ..; done
+{% endsyntax %}
+
+Es decir, listamos el contenido de la carpeta y tratamos cada entrada del
+listado como una carpeta a la que entramos, ejecutamos `git remote --verbose`
+filtrando con `grep` las líneas que no se refieren a origin (para los
+repositorios que son *forks* míos del original) y regresamos al directorio
+original. La salida es algo como lo siguiente
+
+{% syntax text %}
+origin  https://github.com/sjl/clam.vim.git (fetch)
+origin  https://github.com/sjl/clam.vim.git (push)
+origin  https://github.com/kien/ctrlp.vim.git (fetch)
+origin  https://github.com/kien/ctrlp.vim.git (push)
+origin  https://github.com/vim-scripts/django.vim.git (fetch)
+origin  https://github.com/vim-scripts/django.vim.git (push)
+origin  https://github.com/scrooloose/nerdtree.git (fetch)
+origin  https://github.com/scrooloose/nerdtree.git (push)
+{% endsyntax %}
+
+Podemos extraer sólo las URLs (imprimir la segunda columna) con `awk`,
+eliminar los duplicados con `uniq`:
+
+{% syntax bash %}
+$ ls | while read subm; do cd $subm && git remote --verbose | grep origin | awk '{print $2}' | uniq && cd ..; done
+{% endsyntax %}
+
+Lo cual nos da una lista de URLs que copié y pegué en un archivo (`submodules.txt`):
+
+{% syntax bash %}
+$ cat submodules.txt
+https://github.com/sjl/clam.vim.git
+https://github.com/kien/ctrlp.vim.git
+https://github.com/vim-scripts/django.vim.git
+https://github.com/scrooloose/nerdtree.git
+{% endsyntax %}
+
+El siguiente paso es añadir los submódulos al repositorio con el comando
+`git submodule add [URL del repositorio] [ruta para el submódulo]`, que debe
+ejecutarse desde la raíz del repositorio. Para empezar:
+
+{% syntax bash %}
+$ cd ~/dotfiles
+$ mkdir -p vim/bundle
+$ cp ~/backup/vim/bundle/submodules.txt .
+{% endsyntax %}
+
+Ahora hay que recorrer la lista de URLs creando los submódulos correspondientes.
+Recorrer la lista usando `while` es trivial, pero existe el problema de nombrar
+los submódulos. Idealmente tendrían que llamarse según la última parte de la
+URL, sin el ".git", que se podría obtener con:
+
+{% syntax bash %}
+$ echo https://github.com/scrooloose/nerdtree.git | cut --delimiter "/" --fields 5 | sed 's/.git//'
+nerdtree
+{% endsyntax %}
+
+¿Cómo incorporarlo en el ciclo sobre las URLs? Una manera es usar *backticks*
+(acentos graves) para la "sustitución de comandos", que toma la salida estándar
+de un comando y la usa como parte de la definición de otro:
+
+{% syntax bash %}
+$ cat submodules.txt | while read subm; do git submodule add $subm vim/bundle/`echo $subm | cut --delimiter "/" --fields 5 | sed 's/.git//'`; done
+{% endsyntax %}
+
+Una vez que terminan las descargas tendremos nuestros plugins de Vim
+perfectamente organizados en submódulos de nuestro repositorio de dotfiles.
+
+¿Qué otras cosas se podrán hacer con la línea de comandos?
+
+{% endarticle %}
+
+{% endblock %}

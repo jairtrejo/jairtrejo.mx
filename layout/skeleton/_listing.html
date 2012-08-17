@@ -1,0 +1,25 @@
+{% extends "skeleton/_body.html"%}
+
+{% block content_header %}
+{% endblock %}
+{% block content_body %}
+<div class="content alignright main-article archives">
+    <h1>{{page.title}}</h1>
+    <table class='archive'>
+{% for node in page.node.walk %}
+    {% with node.ancestors|length as depth%}
+        {% ifequal depth 4 %}
+            {% with 'month' as ty %}
+            {% include "skeleton/_innerlisting.html" %}
+            {% endwith %}
+        {% endifequal %}
+        {% ifequal depth 3 %}
+            {% with 'year' as ty %}
+            {% include "skeleton/_innerlisting.html" %}
+            {% endwith %}
+        {% endifequal %}
+    {% endwith %}
+{% endfor %}
+    </table>
+</div>
+{% endblock %}

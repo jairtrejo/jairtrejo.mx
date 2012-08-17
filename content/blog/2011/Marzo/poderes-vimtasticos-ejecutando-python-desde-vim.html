@@ -1,0 +1,124 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "Poderes vimtásticos: Ejecutando código Python sin abandonar vim"
+    created: 2011-03-29 23:59:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+
+Cuando aprendí [Python](http://www.python.org), hace ya muchos años, busqué un IDE que me fuera tan útil como lo había sido [Eclipse](http://www.eclipse.org) cuando programaba en Java. En esa época no encontré muchas opciones, y ocupé IDLE, el que viene por defecto con Python en Windows.
+
+Cuando poco después di el salto a Linux quise probar otras opciones y después de explorar Emacs brevemente (recuerdo con cariño que al programar en Haskell podía usar símbolos tipográficos como &#955; en lugar de `\` en las lambdas o &#8594; para -&gt;) y decidir que no era para mí, probé con vim. Mi [primera sesión fue como la de todo el mundo](http://www.bash.org/?795779), pero con el tiempo y el tutorial le agarré mejor el modo, aunque aún así no me convenció y usé Gedit por mucho tiempo. Qué ciego estaba.
+
+{% endexcerpt %}
+
+Tiempo después quise agarrar Vim de nuevo, esta vez decidido a dominarlo. Aún estoy muy lejos de lograrlo, pero en este tiempo he escrito todos mis programas y mi tesis completa en ese maravilloso editor y no me arrepiento en lo absoluto. Me gustaría compartirles a través de esta sección algunas de las cosas fantásticas que he aprendido a hacer con él.
+
+## El problema ##
+
+Hace unos días, me llegó en el trabajo una lista así:
+
+{% syntax yaml %}
+Canto general
+
+El perseguidor
+
+La feria
+
+La hojarasca
+
+Conversación en La Catedral
+
+Cronopios y famas
+{% endsyntax %}
+
+Que tenía que convertir en un archivo [YAML](http://www.yaml.org/) así:
+
+{% syntax yaml %}
+canto_general:
+  nombre: "Canto general"
+el_perseguidor:
+  nombre: "El perseguidor"
+la_feria:
+  nombre: "La feria"
+la_hojarasca:
+  nombre: "La hojarasca"
+conversacin_en_la_catedral:
+  nombre: "Conversación en La Catedral"
+cronopios_y_famas:
+  nombre: "Cronopios y famas"
+{% endsyntax %}
+
+## La solución ##
+
+Como me daba flojera hacerlo a mano, escribí un poquito de Python alrededor:
+
+{% syntax python %}
+#encoding: utf-8
+lines = """
+Canto general
+
+El perseguidor
+
+La feria
+
+La hojarasca
+
+Conversación en La Catedral
+
+Cronopios y famas"""
+for l in lines.split('\n\n'):
+    us = l.lower().replace(' ', '_')
+    ad = ''.join([c for c in us if 'a'<=c<='z' or c=='_'])
+    print '%s:\n  nombre: "%s"' % (ad, l.strip())
+{% endsyntax %}
+
+Lo seleccioné en modo visual y escribí el comando:
+
+{% syntax yaml %}
+:'<,'>!python
+{% endsyntax %}
+
+Donde `'<,'<` lo insertó vim automáticamente y significa "el rango seleccionado visualmente". Tras dar Enter, las líneas fueron sustituídas por:
+
+{% syntax %}
+canto_general:
+  nombre: "Canto general"
+el_perseguidor:
+  nombre: "El perseguidor"
+la_feria:
+  nombre: "La feria"
+la_hojarasca:
+  nombre: "La hojarasca"
+conversacin_en_la_catedral:
+  nombre: "Conversación en La Catedral"
+cronopios_y_famas:
+  nombre: "Cronopios y famas"
+{% endsyntax %}
+
+Y listo.
+
+## Espera, ¿qué? ##
+
+El código en Python es más o menos claro: Puse las frases en una cadena, la convertí en una lista dividiéndola cada dos saltos de línea, y cada línea la convierto a minúsculas, cambio espacios por guiones y quito los caracteres "especiales" como acentos y etcétera. Finalmente imprimo todo en el formato pertinente.
+
+En vim, `rango!comando` ejecuta `comando`, enviándole el texto en el rango `rango` a través de su entrada estándar. Finalmente recoge todo lo que `comando` escriba a su salida estándar y lo pega en la posición actual del cursor. En este caso lo ocupé para ejecutar el intérprete de Python, que por defecto empieza a ejecutar lo que le llega por la entrada estándar.
+
+## ¿Y luego? ##
+
+Como supondrán, las posibilidades son amplísimas cuando se combina esta técnica con las muchas utilidades de las que se dispone en un ambiente UNIX. Por ejemplo, para ordenar una lista por órden lexicográfico basta con seleccionarla y escribir:
+
+{% syntax yaml %}
+:'<,'>!sort
+{% endsyntax %}
+
+Sencillo, ¿no?. ¿Qué otras cosas se les ocurren?.
+
+{% endarticle %}
+
+{% endblock %}
+
+
+

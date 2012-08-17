@@ -1,0 +1,143 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "Malabares con cuatro nueves (Parte 1)"
+    subtitle: "Colocando enanos sobre hombros de gigantes."
+    created: 2011-03-21 21:55:00
+    foot_notes:
+        - Una operación binaria 'o' es asociativa cuando (a o b) o c = a o (b o c). Un ejemplo de operación asociativa es la suma ((3 + 5) + 2 = 3 + (5 + 2) = 10), uno de no asociativa es la resta ((5 - 3) - 2) = 0, que no es igual a 5 - (3 - 2) = 4).
+        - Una operación binaria 'o' es conmutativa cuando a o b = b o a. Un ejemplo de operación conmutativa es la multiplicación (6 × 3 = 3 × 6 = 18), uno de no-conmutativa es la división (6 ÷ 3 = 2, que no es igual a 3 ÷ 6 = 0.5).
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+
+Hace algún tiempo, [@stormentas](http://twitter.com/stormentas) me hizo una pregunta muy interesante en&nbsp;[Formspring](http://formspring.me):
+
+>Acertijo: Usando suma, resta, multiplicación, división, exponenciación y raíz, ¿cuál es el número más grande que puedes formar con cuatro nueves?
+
+La pregunta duró meses en mi buzón porque, a pesar de que intuía la respuesta, no estaba seguro de la mejor manera de justificarla. Cuando hace una semana decidí sentarme a hacerlo, me encontré con tantas cosas interesantes que decidí empezar este blog.
+
+Por conveniencia dividí la respuesta en 2 partes. En esta primera entrega, hablaré del proceso para elegir las operaciones y llegar a la solución. En la segunda parte hablaré sobre las dificultades que tuve al buscar el valor de esa solución.
+
+{% endexcerpt %}
+
+## Planteando la solución ##
+
+La primera parte del problema es determinar la secuencia de operaciones que dan el resultado máximo. Parece la más difícil, especialmente si se quiere justificar con cierto rigor, pero ya veremos que no lo es tanto.
+
+### De dos en dos ###
+
+Las seis operaciones que el acertijo permite usar son operaciones binarias, lo que significa que toman exactamente dos números y los combinan para obtener su resultado. Esto implica que cualquier operación que realicemos será por parejas; algunas combinarán dos nueves y otras combinarán un nueve con un resultado previo.
+
+Si cada operación toma una pareja de números y devuelve uno solo, al encadenarlas reducimos en uno la cantidad de números sobre los que podemos operar; esto implica que para nuestros cuatro nueves podemos realizar un máximo de tres operaciones, por tres "caminos" diferentes:
+
+<div class='figure alignright'>
+    <p><img class='article-image' src='{{site.url}}/media/images/posts/binarias.png' /></p>
+    <p class='caption'><strong>Figura 1</strong>. Posibles formas de evaluación.</p>
+</div>
+
+* El primero es formar dos parejas de nueves, combinarlas por separado y finalmente combinar los resultados (*Figura 1a*).
+
+* El segundo es combinar una pareja de nueves, combinar el resultado con otro nueve, y finalmente combinar el resultado con el nueve restante (*Figura 1b*).
+
+* El tercero es repetir el proceso del segundo, pero de derecha a izquierda (*Figura 1c*).
+
+Los caminos **a**, **b** y **c** son equivalentes cuando sólo se usan operaciones **asociativas**<sup><a href='#fnote1'>[1]</a></sup> y **conmutativas**<sup><a href='#fnote2'>[2]</a></sup> (suma y multiplicación), pero no son equivalentes al incorporar las **no-asociativas** o **no-conmutativas** (resta, división, exponenciación y raíz).
+### Maximizando los resultados ###
+
+Sigue la cuestión de maximizar cada una de las tres operaciones que nos permite cada camino.
+
+El **camino a** comienza combinando dos nueves. Hay seis posibilidades, así que verificarlas todas parece una ruta sensata. En general, para dos números positivos iguales y mayores que 2:
+
+<table style='width:50%'>
+    <thead>
+        <th>Operación</th>
+        <th>Resultado</th>
+    </thead>
+    <tr>
+        <td class='formula'>a<strong> + </strong>a</td>
+        <td>2a</td>
+    </tr>
+    <tr>
+        <td class='formula'>a<strong> - </strong>a</td>
+        <td>0</td>
+    </tr>
+    <tr>
+        <td class='formula'>a<strong> &times; </strong>a</td>
+        <td>a<sup>2</sup></td>
+    </tr>
+    <tr>
+        <td class='formula'>a<strong> &divide; </strong>a</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td class='formula'>a<sup><strong>a</strong></sup></td>
+        <td>a<sup>a</sup></td>
+    </tr>
+    <tr>
+        <td class='formula'>a<sup>1<strong>/</strong>a</sup></td>
+        <td>a<sup>1/a</sup></td>
+    </tr>
+</table>
+
+Que ordenados quedan:
+
+<p class='formula'>a <strong>^</strong> a &gt; a <strong>&times;</strong> a &gt; a <strong>+</strong> a &gt; a <strong>^</strong> (1 <strong>&divide;</strong> a) &gt; a <strong>&divide;</strong> a &gt; a <strong>-</strong> a</p>
+
+Donde a^b significa a<sup>b</sup>.
+
+Como las tres operaciones serán entre números iguales, la mejor elección es usar tres veces la exponenciación, de la siguiente manera:
+
+<p class='formula'>(9 <strong>^</strong> 9) <strong>^</strong> (9 <strong>^</strong> 9)</p>
+
+O en notación más convencional (aunque a mi parecer menos conveniente):
+
+<p class='formula'>(9<sup>9</sup>)<sup>9<sup>9</sup></sup> <strong>=</strong> 9<sup>9&times;9<sup>9</sup></sup> <strong>=</strong> 9<sup>9<sup>10</sup></sup></p>
+
+El **camino b** supone un desafío ligeramente más complicado. Intuitivamente, parece que la mejor opción es volver a usar la exponenciación en los tres casos. Veamos si podemos convencernos de ello, o probar que estamos equivocados.
+
+Supongamos dos números enteros positivos a y b mayores que 1 (dado que el número más pequeño con el que operaremos es 9) tales que a &gt; b. Entonces tanto "a **-** b" como "a **&divide;** b" y "a **^** (1 / b)" dan resultados menores que a. Por otro lado, a **+** b, a **&times;** b y a **^** b dan todos resultados mayores que a, por lo que la mejor opción debe estar entre ellos.
+
+La operación a **&times;** b puede expandirse en "a **+** a **+** ..." b veces, y como a &gt; b, a **&times;** b siempre será mayor que a **+** b. Por otro lado, a **^** b puede expandirse en "a **&times;** a **&times;** ..." b veces, y de nuevo como a &gt; b, a **^** b es siempre mayor que a **&times;** b. Por lo tanto, a **^** b es de nuevo la mejor opción, y la operación completa queda:
+
+<p class='formula'>((9 <strong>^</strong> 9) <strong>^</strong> 9) <strong>^</strong> 9</p>
+
+Que es lo mismo que:
+
+<p class='formula'>((9<sup>9</sup>)<sup>9</sup>)<sup>9</sup> <strong>=</strong> (9<sup>81</sup>)<sup>9</sup> <strong>=</strong> 9<sup>729</sup></p>
+
+El **camino c** es muy similar al b, pero por el otro lado. Volviendo a nuestra pareja de enteros a y b mayores que la unidad con a &gt; b, las operaciones serán "b **o<sub>n</sub>** a" en lugar de "a **o<sub>n</sub>** b".
+
+La operación "b **-** a" nos da un resultado negativo con valor absoluto menor que a. La operación "b **&times;** a" nos da un resultado menor que 1. Y de nuevo el resultado de "b **^** (1 / a)" es menor que a. Todas son malas opciones.
+
+El resultado de "b **&times;** a" es mayor que el de "b **+** a" por el mismo argumento que en el camino c, dado que la suma y la multiplicación son conmutativas. Finalmente "b **^** a" se expande en "b **&times;** b **&times;** ..." a veces; mientras que "b **&times;** a" se expande en "b **+** b **+** ..." a veces, y como la multiplicación da un mayor resultado que la suma, tenemos que "b **^** a" vuelve a ser la mejor opción.
+
+Trasladando esto a la operación completa tenemos:
+
+<p class='formula'>9 <strong>^</strong> (9 <strong>^</strong> (9 <strong>^</strong> 9))</p>
+
+O en notación convencional:
+
+<p class='formula'>9<sup>9<sup>9<sup>9</sup></sup></sup></p>
+
+Falta elegir el mayor de los tres caminos. Dado que sus formas finales son muy similares, es fácil ver que:
+
+<p class='formula'>9<sup>9<sup>9<sup>9</sup></sup></sup> <strong>&gt;</strong> 9<sup>9<sup>10</sup></sup> <strong>&gt;</strong> 9<sup>729</sup></p>
+
+Y por lo tanto el número más grande que se puede formar con cuatro nueves, usando sólo suma, resta, multiplicación, división, exponenciación y raíz es el resultado de:
+
+<p class='formula'>9<sup>9<sup>9<sup>9</sup></sup></sup></p>
+
+En la segunda parte, trataremos de averiguar cuánto exactamente es eso. Para saber por qué no es trivial, le sugiero al lector intentar hacer la operación en una calculadora.
+
+#### Notas ####
+
+{% for fn in page.foot_notes %}
+<p class='footnote'><sup id='fnote{{forloop.counter}}'>[{{forloop.counter}}]</sup> {{fn}}</p>
+{% endfor %}
+
+{% endarticle %}
+
+{% endblock %}
+

@@ -1,0 +1,45 @@
+{% extends "skeleton/_root.html" %}
+{% block all %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link href='http://fonts.googleapis.com/css?family=Lato:regular,regularitalic,bold|Yanone+Kaffeesatz:light,regular,bold' rel='stylesheet' type='text/css'>
+    {% block feeds %}
+    <link href="{{ site.url }}/blog/atom.xml" rel="alternate" title="{{ site.name }}" type="application/atom+xml"/>
+    {% endblock %}
+    {% block css %}
+    <link rel="stylesheet" href="{{ site.url }}/media/css/style.css" type="text/css" media="screen" charset="utf-8">
+    {% block extra_css %}
+    <link rel="stylesheet" href="{{ site.url }}/media/css/pygments.css" type="text/css" media="screen" charset="utf-8">
+    {% endblock %}
+    {% endblock %}
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <title>{% block title %}{{ site.name }} :: {{page.title}}{% endblock %}</title>
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-2221948-2']);
+      _gaq.push(['_setDomainName', '.jairtrejo.mx']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+</head>
+
+<body>
+    <div class='wrapper'>
+        {% block content %}{% endblock %}
+        {% filter typogrify %}
+        {% include "skeleton/_sidebar.html" %}
+        {% endfilter %}
+    </div>
+    {% include "skeleton/_footer.html" %}
+</body>
+</html>
+{% endblock %}

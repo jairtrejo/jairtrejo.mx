@@ -1,0 +1,194 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "Estudiando japonés con Japanese, Anki y Python"
+    created: 2011-05-26 01:36:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+
+En mi estudio del japonés la tecnología siempre ha sido una gran aliada. Sin diccionarios electrónicos (Primero [Suiteki](http://hispadic.byethost3.com/download2.php#suiteki) en el teléfono, luego [PAdict](http://padict.sourceforge.net/) en la Palm y ahora [Japanese](http://itunes.apple.com/app/japanese/id290664053?mt=8) en el iPhone; en la desktop siempre [Gjiten](http://en.wikipedia.org/wiki/Gjiten)) leer sería tan tedioso que probablemente ya me hubiera rendido; por otro lado, aprender un vocabulario tan diferente y con tan poca relación con el español hubiera sido muy difícil si no contara con [Anki](http://ankisrs.net/), mi software de repetición espaciada.
+
+Por separado son una maravilla, pero cuando descubrí que mi diccionario permite exportar listas de vocabulario no me aguanté la tentación y puse ambas herramientas a trabajar juntas usando mi pegamento favorito: Python.
+
+{% endexcerpt %}
+
+## El diccionario: Japanese ##
+
+[Japanese](http://itunes.apple.com/app/japanese/id290664053?mt=8) es un diccionario inglés-japonés para el iPhone. Pero incluye mucho más que un diccionario:
+
+- **Buscador de kanjis** por nivel, por trazos, por radicales, etc.
+- **Listas de vocabulario** que puedes ordenar en carpetas; cuando estás leyendo una entrada del diccionario agregarla a una lista está a dos clicks de distancia.
+- **Notas y etiquetas** para clasificar o anotar entradas del diccionario.
+- **Listas de vocabulario para el JLPT** divididas por nivel.
+- **Interfaz de estudio** para repasar listas, ya sea las creadas por el usuario o las precargadas para el [JLPT](http://www.jlpt.jp/e/).
+
+Y el diccionario mismo no tiene desperdicio:
+
+- Dice que es el [JMDICT](http://www.csse.monash.edu.au/~jwb/jmdict.html), pero me parece más completo que el que traen Gjiten o PAdict. Incluso he encontrado expresiones y palabras que no aparecen en el [大辞林](http://en.wikipedia.org/wiki/Daijirin).
+- Abundantes oraciones de ejemplo, tomadas del [Tanaka Corpus](http://www.edrdg.org/wiki/index.php/Tanaka_Corpus).
+- Conjugación de verbos. Supongo que es automática, pero hasta ahora no he encontrado errores.
+- Las palabras vienen pre-clasificadas de acuerdo a su "campo semántico" y a su función sintáctica.
+
+Todo por $100 pesos (aprox. $10 USD). [Puede parecer mucho para un app](http://theoatmeal.com/blog/apps), pero lo vale. Además es varias veces menos que el precio de un diccionario de papel o un 電子辞書 y la calidad del diccionario me ha parecido más que adecuada.
+
+Por si fuera poco, permite enviar las listas de vocabulario por mail; de ahí es fácil imprimirlas, archivarlas, etc.
+
+## El SRS: Anki ##
+
+Una de las partes más complicadas de aprender un idioma nuevo es la gran cantidad de cosas que es necesario aprender de memoria; el vocabulario tan "ajeno" del japonés es particularmente <strike>difícil</strike> interesante de memorizar porque la similitud con el español es prácticamente nula. Esto hace inevitable el estudio; hay que dedicar mucho tiempo a memorizar las nuevas palabras y a repasar las que ya se conocen; el uso de tarjetas donde la palabra aparece en el frente y su significado en la parte de atrás es un método muy común.
+
+El problema es que la pila de tarjetas va creciendo conforme se aprenden nuevas palabras y pronto se hace impráctico repasarlas todas. Una manera de lidiar con esto es eliminar las tarjetas que ya nos sabemos de memoria, pero ¿cómo saber que ya nos aprendimos las palabras lo suficientemente bien? Un [SRS](http://en.wikipedia.org/wiki/Spaced_repetition_system) (spaced repetition system) es un sistema de organización de las tarjetas que nos ayuda a resolver estos problemas.
+
+Los SRS reducen el tiempo de estudio a través de la clasificación de las tarjetas de acuerdo con la facilidad con la que las recordamos, presentándonos con mayor frecuencia las tarjetas "difíciles" y más *espaciadas* las "fáciles". La idea es que así nuestras sesiones de estudio se enfocan en aprender nuevas palabras y repasar sólo las necesarias. Además, facilitan el aprendizaje porque el esfuerzo de recordar las viejas palabras que nos preguntan en intervalos cada vez más grandes ayudan a afianzarlas en nuestra memoria.
+
+La manera más sencilla de implementar un SRS es a través de un programa de computadora, que lleva la cuenta de todos estos factores y va decidiendo los tiempos en los que hace las preguntas.
+
+Según su propia página, [Anki](http://ankisrs.net/) es "un programa para aprender cosas fácilmente". Permite crear "tarjetas" que se pueden llenar con videos, sonidos, imágenes, texto, ecuaciones, etc., definiendo qué lado es la pregunta y qué lado es la respuesta. A la hora de estudiar, el sistema decide qué tarjetas es conveniente mostrar hoy y permite al usuario revisarlas una por una preguntándole qué tan fácil (o difícil, o imposible) fue recordarla, usando esta información para agendar la presentación de la tarjeta en algún otro momento.
+
+Afortunadamente, Anki permite importar archivos CSV con "campos" y convertirlos automáticamente en tarjetas.
+
+## La idea de juntarlos ##
+
+En el nivel pasado, mi profesor de japonés hablaba muy, pero muy poco español en clase. Además, le gustaba hablar de temas de interés general usando palabras y expresiones "normales", sin tratar de facilitarnos las cosas, de manera que cada clase había montones de cosas nuevas por aprender. Armado con mi iPhone, yo las buscaba y agregaba a una lista en Japanese para después llegar a la casa y pasarlas al Anki; pero cuando una clase salí con 50 palabras nuevas decidí que había que automatizar el proceso a como diera lugar.
+
+## Manos a la obra ##
+
+### La entrada y la salida ###
+
+El correo que genera Japanese a partir de las listas tiene el siguiente formato (omitiendo los headers):
+
+{% syntax text %}
+姿（すがた）
+すがた
+シ
+figure, form, shape
+
+悩み（なやみ）
+trouble, troubles, worry, anguish, agony, problem
+
+叱られる（しかられる）
+to be scolded (reproved)
+
+ハックション
+achoo!, atishoo!, sneeze
+
+噂（うわさ）
+うわさ
+ソン
+rumor, gossip, hearsay
+
+早退（そうたい）
+leave early
+
+第一印象（だいいちいんしょう）
+first impression
+
+くしゃみ
+sneeze
+
+
+
+
+Created with Japanese for iPhone®/iPod touch®
+http://www.codefromtokyo.com/japanese
+
+
+Sent from Jair's iPhone
+{% endsyntax %}
+
+Y mi *mazo* en Anki necesita los siguientes campos:
+
+<table style='margin:0 1em;'>
+    <thead>
+        <th style='text-align:left'>Campo</th>
+        <th>Descripción</th>
+    </thead>
+    <tbody style='text-align:left'>
+        <tr>
+            <td class='description'><strong>Expresión</strong></td>
+            <td style=''>La expresión que deseo aprender (palabra, frase, etc.), con su ortografía original.</td>
+        </tr>
+        <tr>
+            <td class='description'><strong>Lectura</strong></td>
+            <td>La expresión "como suena" en hiragana o katakana.</td>
+        </tr>
+        <tr>
+            <td class='description'><strong>Significado</strong></td>
+            <td>El significado en inglés o español de la expresión.</td>
+        </tr>
+        <tr>
+            <td class='description'><strong>Etiquetas</strong></td>
+            <td>"kana" para las expresiones que se escriben usando sólo hiragana o katakana y "kanji" para las que involucran kanjis.</td>
+        </tr>
+    </tbody>
+</table>
+
+Por lo que necesitamos generar un archivo como éste:
+
+{% syntax text %}
+姿,すがた,"figure, form, shape",kanji
+悩み,なやみ,"trouble, troubles, worry, anguish, agony, problem",kanji
+叱られる,しかられる,to be scolded (reproved),kanji
+ハックション,ハックション,"achoo!, atishoo!, sneeze",kana
+噂,うわさ,"rumor, gossip, hearsay",kanji
+早退,そうたい,leave early,kanji
+第一印象,だいいちいんしょう,first impression,kanji
+くしゃみ,くしゃみ,sneeze,kana
+{% endsyntax %}
+
+### Primer problema: obtener la lista ###
+
+Lo de menos es copiar y pegar el contenido del correo en un archivo de texto, pero siempre quise aprender a leer correos desde Python y en este caso haría todo más conveniente. Así que escribí este script:
+
+<script src="https://gist.github.com/992591.js?file=get_japanese.py"></script>
+
+Se conecta al servidor de Gmail, trae los mensajes no leídos y revisa los que vienen de la aplicación (los reconoce por la "firma" que traen al final), imprimiendo las líneas relevantes al archivo especificado por la línea de comandos<sup><a href='#fnote1'>[1]</a></sup>.
+
+Para usarlo voy a Japanese, exporto la lista y me la mando por correo. Ya que llegaron a mi bandeja ejecuto el script:
+
+{% syntax bash %}
+$ ./get_japanese.py 2011-05-25.txt
+1 mensajes procesados
+{% endsyntax %}
+
+Lo cual crea el archivo 2011-05-25.txt que contiene las líneas relevantes del mensaje.
+
+### Segundo problema: generar el CSV ###
+
+Falta separar el texto en campos y mostrarlos ordenados en un CSV. Esta etapa me costó un buen rato de prueba y error, pero finalmente llegué al siguiente script:
+
+<script src="https://gist.github.com/992591.js?file=japanese2anki.py"></script>
+
+Los comentarios explican el proceso, si acaso cabe destacar el uso del módulo csv, parte de la librería estádar de Python. Con él es sencillísimo leer y escribir archivos CSV, transformándolos en y desde diccionarios de Python.
+
+Cuando corro el script:
+
+{% syntax bash %}
+$ ./japanese2anki.py 2011-05-25.txt
+{% endsyntax %}
+
+Crea el archivo 2011-05-25.csv que se puede importar con toda facilidad en Anki.
+
+## En conclusión ##
+
+Incorporar la tecnología a nuestras actividades cotidianas puede hacernos la vida mucho más sencilla. En el caso de los idiomas, el tiempo que me ahorran Anki y Japanese lo puedo invertir en ver películas, leer, escuchar música y otras actividades mucho más entretenidas y productivas.
+
+Por otro lado, saber programar abre la posibilidad de mezclar y aumentar nuestras herramientas existentes de muchas nuevas maneras. Cuando además se usa un lenguaje simple y poderoso como Python, el proceso es relativamente fácil y muy divertido.
+
+## Notas ##
+
+<p class='footnote'><sup id='fnote1'>[1]</sup> Lo único fuera de lo común es cuando uso <code>quopri.decodestring</code> para decodificar el mensaje. Resulta que al examinar el mensaje en "texto plano" (<a href='http://www.joelonsoftware.com/articles/Unicode.html'>no existe tal cosa</a>, lo sé, pero denme chance) cada una de las "entradas" se veía más o menos así:</p>
+
+{% syntax text %}
+=E3=81=8F=E3=81=97=E3=82=83=E3=81=BF
+sneeze
+{% endsyntax %}
+
+<p class='footnote'>Nunca había visto nada parecido. Investigando leí que se trata de <em><a href='http://en.wikipedia.org/wiki/Quoted-printable'>MIME quoted-printable data</a></em>, una manera de codificar caracteres Unicode en un mensaje que resulta práctica cuando no son muchos en relación con la cantidad de texto ASCII. No voy a entrar aquí en detalles, pero a final de cuentas Python tiene un módulo, `quoprint` que permite trabajar con este tipo de codificación.</p>
+
+{% endarticle %}
+
+{% endblock %}
+

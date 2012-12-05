@@ -1,0 +1,3 @@
+fabric
+cherrypy
+git+https://github.com/jairtrejo/hyde.git

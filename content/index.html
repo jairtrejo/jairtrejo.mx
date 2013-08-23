@@ -13,12 +13,12 @@
         {% with recents|first as post %}
         <h1 class="article-title">{{post.title}}</h1>
         {% if post.subtitle %}<h2 class='article-subtitle'>{{ post.subtitle }}</h1>{% endif %}
-    <p class="metadata">{{post.created|date:"l d \d\e F \d\e Y"|capfirst}}</p>
+        <p class="metadata"><time pubdate>{{ post.created|date:"l F d, Y" }}</time></p>
         {% if post.image %}
         <img src='{{site.url}}{{post.image}}' title={{post.title}} class='article-image centered'/>
         {% endif %}
         {% render_excerpt post 1000 %}
-        <p class='keep-reading'><a href='{{post.url}}'>Seguir leyendo &rarr;</a></p>
+        <p class='keep-reading'><a href='{{post.url}}'>Keep reading &rarr;</a></p>
         {% endwith %}
     </div>
     {%for post in recents|slice:"1:" %}
@@ -26,12 +26,12 @@
             <div class="alignleft">
                 <h1>{{post.title}}</h1>
                 {% if post.subtitle %}<h2 class='article-subtitle'>{{ post.subtitle }}</h1>{% endif %}
-                <p class="metadata">{{post.created|date:"l d \de F \de Y"|capfirst}}</p>
+                <p class="metadata"><time pubdate>{{ post.created|date:"l F d, Y" }}</time></p>
             </div>
             <div class="alignright">
                 <div class="excerpt">{% render_excerpt post 1000%}</div>
             </div>
-            <p class='keep-reading'><a href='{{post.url}}'>Seguir leyendo &rarr;</a></p>
+            <p class='keep-reading'><a href='{{post.url}}'>Keep reading &rarr;</a></p>
         </div>
     {%endfor%}
 </div>

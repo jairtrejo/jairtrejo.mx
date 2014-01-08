@@ -1,0 +1,41 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "Multilingual fields in Django"
+    created: 2014-01-07 23:09:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+A while ago, back when Django was in it's 1.3 version, my first serious project was [http://datoz.com](http://datoz.com), a real estate information site featuring, among other things, bilingual descriptions of office spaces.
+
+Back then I [wrote about how we managed that](https://coderwall.com/p/sgdm1w) in a quick and easy manner, with no external dependencies, essentially by creating separate fields for each language and unifying acces to them with a `property`.
+
+{% endexcerpt %}
+
+{% syntax python %}
+from django.utils import translation
+
+class Product:
+    description_en = models.CharField()
+    description_es = models.CharField()
+    @property
+    def description(self):
+        lang = translation.get_language()
+        return getattr(
+            self, 'description_%s' % lang,
+            _(u'Not available')
+        )
+{% endsyntax %}
+
+Sort of quick and dirty, yeah, but back then existing apps for doing that striked me as buggy, or too big, or outright unmantained. After sharing that post on Reddit people helpfully pointed me to a couple of libraries that do a much better job, namely:
+
+- [django-linguo](https://github.com/zmathew/django-linguo), by [Zack Mathew](https://github.com/zmathew), which uses the same approach, but in a more structured manner, and with nice features like being able to sort and filter by the special fields without manually specifyng them.
+- [django-hvad](https://github.com/kristianoellegaard/django-hvad), by [Kristian Øllegaard](http://kristian.io/) and [Jonas Obrist](http://ojii.ch) which uses a custom manager and lets you do things like `Normal.objects.language("en").all()`, which I think is much neater than having the language of the query implicitly depending on the global language setting.
+
+You should check them out!
+
+{% endarticle %}
+{% endblock %}
+
+

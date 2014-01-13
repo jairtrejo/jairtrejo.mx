@@ -1,0 +1,56 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "Git commit sins"
+    created: 2014-01-11 22:10:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+I work at Vinco Orbis, a software development studio in Mexico City. We recently [overhauled our website](http://vincoorbis.com) and set up a Github repo for further development and maintenance. We are pretty proud, you should check it out.
+
+However, amidst the creative enthusiasm we fell into some bad committing practices, much of them coming from members of the staff that were contributing from Github's web interface and are less used to version control in their day to day job. I thought it would be cool to share them here so we all keep them in mind in the future.
+{% endexcerpt %}
+
+## This is a commit &mdash; Commit messages that don’t convey intent
+
+<img class='article-image centered' src='{{site.url}}/media/images/posts/pizza-hut.jpg' />
+
+Github's default commit message for when you edit a file in the web interface is `Updated <filename>`, which is not helpful at all. The title of a commit message should convey the intent of the change, which is going to be useful when exploring the repository's history. Other information can be left for the body of the message, and of course the diff already contains the filenames and locations of changes, so just restating them in the title is not very useful.
+
+For deeper advice on writing good commit messages you should read [Tim Pope's classic blog post about it.](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
+
+## Pay no attention to those lines of code behind the curtain &mdash; Commenting stuff out just in case you need it later
+
+<img class='article-image centered' src='{{site.url}}/media/images/posts/manbehindthecurtain.jpg' />
+
+Commenting stuff out is confusing for future readers of your code, ugly because you keep code around that is not doing anything and dangerous because you are keeping that code outside of your normal testing and QA processes, so you don't know what evils you will unleash upon the world if you uncomment it later.
+
+On the other hand, the whole point of version control is to keep old versions of your source code in case you need them later. You can just delete those lines, because [you can always find them later](http://git-scm.com/docs/git-log), together with the change set in which they occurred and, if you write good commit messages, a meaningful description of how they came about.
+
+## You should take me with a grain of salt &mdash; A commit doing something, followed by a commit doing the opposite
+
+<img class='article-image centered' src='{{site.url}}/media/images/posts/contradiction.jpg' />
+
+This usually comes from people that are used to SVN, where the history of the repository was shared and immutable. However, with Git other people don't really need to know that you screwed up and had to recant later: [you can use `git rebase`](http://git-scm.com/book/en/Git-Branching-Rebasing) to get your local history clean and understandable before sharing it with the world.
+
+## Shooting from the hip &mdash; Pushing directly to master
+
+<img class='article-image centered' src='{{site.url}}/media/images/posts/sam.gif' />
+
+At Vinco Orbis we grant push permissions to a project's repo to the people in charge of reviewing and accepting contributions from the team, which come in the form of pull requests. This is not meant to be authorization for committing directly to master, bypassing our normal process; there is a lot of value in having changes reviewed by somebody else, and we have found that it's easier to fix bugs or improve the code when potential improvements are identified earlier.
+
+Even with small projects with only one contributor, it's useful to run things by our Jenkins job pull request builder, and taking a look at the diff one last time has saved me much pain in more than one occasion.
+
+## Tweak, break the site for everybody, repeat &mdash; Using the production site as a testing ground
+
+<img class='article-image centered' src='{{site.url}}/media/images/posts/ecce-homo.jpg' />
+
+Lastly, and related to having commit privileges, it's really irritating when someone triggers a deployment just to see the effect of their changes. We try to eliminate that need by clearly describing the set-up process of the development environment in our `README` files, and making said process very simple by using tools like [Vagrant](http://www.vagrantup.com/). Our goal is that anyone that wants to make a contribution can experiment at leisure on their machines before sending their changes upstream.
+
+Even people without commit privileges sometimes make changes without checking they work at all. Although this can be spotted by the reviewer of their pull requests, we also have Jenkins run unit tests and publishing the result as a comment, which helps catch regressions. Still, it is better that people run their changes at least once to see if they are working, and absolutely wonderful if they write tests even for "small" fixes.
+
+¿What are good and bad committing practices in your organization?
+
+{% endarticle %}
+{% endblock %}

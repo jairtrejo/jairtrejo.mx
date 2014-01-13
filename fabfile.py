@@ -38,3 +38,4 @@ def publish():
         local_dir=DEPLOY_PATH.rstrip('/') + '/',
         delete=True
     )
+    local('scp ../curriculum/jair-trejo.pdf jtrejo@jairtrejo.mx:/home/jtrejo/webapps/jtrejomx/resume.pdf')

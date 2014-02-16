@@ -1,0 +1,38 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "No protocol method IDeref.-deref defined for type om.core/MapCursor"
+    created: 2014-01-27 10:58:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+I was following along [David Nolen's Om tutorial](https://github.com/swannodette/om/wiki/Tutorial) and found a curious error. When I got to [the part](https://github.com/swannodette/om/wiki/Tutorial#wiki-debugging-om-components) where the delete buttons weren't supposed to work, they worked just fine. Adding the derefing to contacts resulted in:
+
+{% syntax console %}
+Uncaught Error: No protocol method IDeref.-deref defined for type om.core/MapCursor: [object Object]
+{% endsyntax %}
+
+{% endexcerpt %}
+
+I thought it might have to do with my Om version. Sure enough, latest was 0.3.0 and I was in 0.2.3. I went to `project.cljs` and changed my dependencies to:
+
+{% syntax clojure %}
+  :dependencies [[org.clojure/clojure "1.5.1"]
+                 [org.clojure/clojurescript "0.0-2138"]
+                 [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
+                 [om "0.3.0"] ; was [om "0.2.3"]
+                 [com.facebook/react "0.8.0.1"]]
+{% endsyntax %}
+
+But it didn't work as expected. I asked David on twitter and he kindly pointed me to [this Github issue](https://github.com/swannodette/om/issues/75), where I found the missing step:
+
+{% syntax bash %}
+$ lein cljsbuild clean
+{% endsyntax %}
+
+To regenerate the compiled js. With that done, everything worked as expected.
+
+{% endarticle %}
+{% endblock %}
+

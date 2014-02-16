@@ -1,0 +1,29 @@
+{% extends "skeleton/_new_base.html" %}
+
+{% hyde
+    title: "Talks"
+%}
+
+{% block content %}
+{% markdown %}
+# {{page.title}}
+
+<table class="archive">
+    <tbody>
+    {% for node in page.node.walk %}
+        {% for talk in node.pages %}
+            {% if talk != page %}
+                <tr>
+                    <td><a href="{{ talk.url }}">{{ talk.title }}</a></td>
+                    <td class="location">{{ talk.location }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endmarkdown %}
+{% endblock %}
+
+

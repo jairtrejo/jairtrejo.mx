@@ -1,38 +1,28 @@
-{% extends "skeleton/_body.html" %}
+{% extends "skeleton/_new_base.html" %}
 {% hyde
-    title: "Blog"
     created: 2010-12-29 14:30:00
     listing: True
 %}
 
-{% block content_body %}
-{% recent_posts recents 4 %}
+{% block content %}
+{% recent_posts recents 6 %}
 
-<div class="content alignright">
-    <div class="main-article">
-        {% with recents|first as post %}
-        <h1 class="article-title">{{post.title}}</h1>
-        {% if post.subtitle %}<h2 class='article-subtitle'>{{ post.subtitle }}</h1>{% endif %}
-        <p class="metadata"><time pubdate>{{ post.created|date:"l F d, Y" }}</time></p>
-        {% if post.image %}
-        <img src='{{site.url}}{{post.image}}' title={{post.title}} class='article-image centered'/>
-        {% endif %}
-        {% render_excerpt post 1000 %}
-        <p class='keep-reading'><a href='{{post.url}}'>Keep reading &rarr;</a></p>
-        {% endwith %}
-    </div>
-    {%for post in recents|slice:"1:" %}
-        <div class='article'>
-            <div class="alignleft">
-                <h1>{{post.title}}</h1>
-                {% if post.subtitle %}<h2 class='article-subtitle'>{{ post.subtitle }}</h1>{% endif %}
-                <p class="metadata"><time pubdate>{{ post.created|date:"l F d, Y" }}</time></p>
-            </div>
-            <div class="alignright">
-                <div class="excerpt">{% render_excerpt post 1000%}</div>
-            </div>
-            <p class='keep-reading'><a href='{{post.url}}'>Keep reading &rarr;</a></p>
-        </div>
-    {%endfor%}
-</div>
+{% with recents|first as post %}
+<h1>{{ post.title }}</h1>
+{% if post.subtitle %}<h2 class="subtitle">{{ post.subtitle }}</h2>{% endif %}
+<p class="date"><time pubdate>{{ post.created|date:"l F d, Y" }}</time></p>
+{% render_excerpt post 1000 %}
+<p class='keep-reading'><a href='{{ post.url }}'>Keep reading <i class="fa fa-chevron-circle-right"></i></a></p>
+{% endwith %}
+
+{% for post in recents|slice:"1:" %}
+<p>
+    <span class="date"><time pubdate>{{ post.created|date:"N m, Y" }}</time></span> <a href="{{ post.url }}">{{ post.title }}</a>
+</p>
+{% endfor %}
+
+<p class="keep-reading">
+    <a href="{{ site.url }}/blog">Archive <i class="fa fa-chevron-circle-right"></i></a>
+</p>
+
 {% endblock %}

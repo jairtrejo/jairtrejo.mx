@@ -1,0 +1,84 @@
+.date{
+    color: #AAA;
+    text-align: center;
+    font-variant: small-caps;
+    font-size: 90%;
+}
+.code{
+    line-height: 1.2em;
+    border-top: dashed 1px #CCC;
+    border-bottom: dashed 1px #CCC;
+    font-size: 90%;
+    overflow-x: auto;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+code{
+    background-color: #f8f8ff;
+    font-weight: bold;
+}
+.article-image{
+    margin: 1em auto;
+}
+.table{
+    border-collapse: collapse;
+    margin: 0 auto;
+    font-size: 90%;
+}
+.table th{
+    color: #000;
+    background-color: #eee;
+    padding: 10px;
+    border-top: solid 1px #AAA;
+}
+.table td{
+    padding: 10px;
+}
+.table td.description{
+    padding-right: 20px;
+    padding-left: 10px;
+    vertical-align: top;
+}
+.figure{
+    margin: 0.5em;
+}
+.figure p{
+    text-align: center;
+    margin: 0;
+}
+.figure p.caption{
+    text-align: center;
+    font-size: 80%;
+    padding: 0.5em 1em;
+}
+p.footnote{
+    clear: both;
+    font-size: 85%;
+    margin: 0.25em 0;
+}
+p.footnote sup{
+    color: #c0392b;
+}
+blockquote{
+    padding: 0 2em;
+    font-style: italic;
+    font-weight: normal;
+    border-left: solid 4px #000;
+    color: #999;
+}
+.formula{
+    text-align: center;
+}
+.formula strong{
+    font-weight:  bold;
+    color: #c0392b;
+}
+li{
+    margin-bottom: 1em;
+}
+div#disqus_thread{
+    margin-top: 2em;
+}
+.figure.alignright{
+    margin-left: 1em;
+}

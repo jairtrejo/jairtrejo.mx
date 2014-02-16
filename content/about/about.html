@@ -1,23 +1,24 @@
-{% extends "_about.html" %}
+{% extends "skeleton/_new_base.html" %}
 
 {% hyde
     title: "About me"
 %}
 
-{% block article %}
-
-#{{page.title}}#
+{% block content %}
+{% markdown %}
+# {{page.title}}
 
 <div class='figure alignright'>
     <img class='article-image' style="margin:0" src='http://www.gravatar.com/avatar/4b8eaf6a72ba36db1851b76ed04bee22.png?s=200' />
 </div>
 
-My name is Jair Trejo, I am a web developer, consultant and manager based on Mexico City. I have been developing software professionally for the past four years, mostly on the web, but my interest in programming is a life-long affair.
+I wrote my first program when I was 6 years old. It was a small dinosaur encyclopedia: you typed a number from the menu and a paragraph on the corresponding dinosaur showed up in the screen. 20 years later I think I can make it much cooler.
 
-I have 6 years of experience working with Python, and have worked in Django projects for the past two years. I have a solid understanding of web development and can easily move up and down the stack.
+I went to school for Mechatronic Engineering. I learned lots of mathematics, electronics, and mechanical engineering, but more importantly I discovered control engineering and through it an approach to problem solving that relies in mathematical modeling, data visualization, statistical analysis and probabilistic techniques. In this days of "big data" it comes in very handy.
 
-Through my career I have almost always written my own front ends, and as of late have been working on single page apps using AngularJS.
+Nowadays I code, manage and consult on the building of web things: websites, applications, tools, toys. Python is the programming language of my heart since before I started doing web development, so I mainly use Django for my backends. I have also done things in Flask, and I'm looking into Pyramid. I am very much capable of writing my own front-ends: HTML, CSS and JavaScript, specially now that AngularJS enables me to to write very sofisticated user interfaces without much ado.
 
-This days I am learning Clojure, and am particularly interested in ClojureScript and `core/async`.
+I am always looking for new things to learn. Current things I am exploring include Clojure (specially ClojureScript and it's promise of saner front-end development) and functional programming in general, REST API design, logic progamming and UI design.
 
+{% endmarkdown %}
 {% endblock %}

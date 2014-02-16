@@ -1,331 +1,127 @@
-/*
- * Global
- */
 body{
-    background: #DCDCDC url('../images/bg.png') repeat fixed top;
-    font-family: 'Lato', Sans-serif;
-    font-size: 16px;
+    font-family: "Open Sans", "Sans-serif";
+    font-size: 18px;
     color: #333;
-    padding: 0;
-    margin: 0;
+    background: #f8f8f8 repeat;
 }
-div.wrapper{
-    clear: both;
-    width: 960px;
+.container{
+    max-width: 760px;
     margin: 0 auto;
-    padding-top: 3em;
 }
-strong{
+.navbar{
+    height: 80px;
+    font-family: "Montserrat", "Serif";
+    margin-bottom: 80px;
+}
+.logo{
+    float: left;
+    margin: 10px 0;
+    height: 80px;
+    line-height: 80px;
+    width: 300px;
+}
+.logo a{
     color: #000;
     font-weight: bold;
 }
-a{
-    color: #c72c20;
-    text-decoration: none;
+img.face{
+    height: 60px; width: 60px;
+    border-radius: 50%;
+    vertical-align: middle;
 }
-a img{
-    border: none;
+.navbar .title{
+    font-size: 25px;
+    padding-left: 10px;
 }
-ul{
+.navbar .nav{
+    float: right;
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 10px 0;
+    font-size: 16px;
 }
-sub,sup{
-    font-size: 75%;
+.navbar .nav li{
+    float: left;
+    padding: 0 15px;
+    height: 80px;
+    line-height: 80px;
+}
+a{
+    text-decoration: none;
+    color: #e74c3c;
+}
+a:hover{
+    color: #c0392b;
+}
+h1, h2, h3, h4{
+    font-family: "Montserrat", "Serif";
+}
+h1{
+    font-size: 30px;
+    text-align: center;
+}
+h2{
+    margin-top: 2em;
+    font-size: 25px;
+}
+h2.subtitle{
+    margin-top: 0;
+    font-size: 20px;
+    text-align: center;
+}
+p{
+    line-height: 150%;
+    text-align: justify;
+}
+.alert{
+    padding: 5px 15px;
+    margin: 10px 0;
+    border-radius: 3px;
+    border: solid 1px #2980b9;
+    background-color: #e8eff3;
+}
+.alert p{
+    text-align: center;
+}
+.alert a{
+    color: #2980b9;
+}
+.footer{
+    clear: both;
+    color: #999;
+    font-size: 90%;
+    margin-top: 40px;
+    margin-bottom: 2em;
 }
 .centered{
     display: block;
     margin-left: auto;
     margin-right: auto;
 }
-
-.alignright{
-    float: right;
-    margin-left: 15px;
-}
-
 .alignleft{
     float: left;
-    margin-right: 15px;
 }
-/*
- * Sidebar
- */
-div.sidebar{
-    font-size: 85%;
-    color: #555;
-    line-height: 1.5em;
-    text-align: right;
-    width: 195px;
+.alignright{
+    float: right;
 }
-
-div.sidebar h1{
-    font-size: 4em;
-    font-family: 'Yanone Kaffeesatz', Serif;
-    color: #B00
-}
-
-div.sidebar h2{
-    color: #c72c20;
-    font-size: 13px;
-    font-weight: bold;
-    color: #000;
-    padding: 0.75em 0;
-    text-transform: uppercase;
-}
-
-div.sidebar a.logo img{
-    margin-bottom: 15px;
-}
-img.profile-pic{
-    border-radius: 50%;
-}
-/*
- * Contenido
- */
-div.content{
-    border: solid 1px #CCC;
-    line-height: 1.7em;
-    width: 620px;
-    background-color: #FFF;
-    padding: 3em;
-    -webkit-border-radius: 1.5em;
-    -moz-border-radius: 1.5em;
-    border-radius: 1.5em;
-    -moz-box-shadow: 10px 10px 8px #888;
-    -webkit-box-shadow: 10px 10px 8px #888;
-    box-shadow: 10px 10px 8px #888;
-    margin-bottom: 3em;
-}
-div.content blockquote{
-    padding: 0 2em;
-    font-style: italic;
-    font-weight: normal;
-    color: #444;
-    border-left: solid 4px #000;
-}
-div.content h1{
-    color: #000;
-    font-size: 2.25em;
-    font-weight: normal;
-    font-family: 'Yanone Kaffeesatz', Serif;
-    line-height: 1.5em;
-    padding: 0;
-    margin: 0;
-}
-div.content p{
-    margin: 0.75em 0 0.75em 0;
-}
-div.article h1{
-    text-align: left;
-    font-weight: normal;
-}
-p.metadata{
-    clear: both;
-    color: #777;
-    font-size: 85%;
-    font-weight: normal;
-    font-variant: small-caps;
-}
-div.article p.metadata{
-    text-align: left;
-}
-div.article{
-    margin: 0 0 0.5em 0;
-    padding-top: 1.5em;
-}
-div.article .alignleft{
-    margin: 0;
-    margin-right: 15px;
-    width: 215px;
-}
-div.article .alignright{
-    margin: 0;
-    width: 385px;
-}
-div.excerpt p, div.excerpt h1, div.excerpt h2, div.excerpt h3, div.excerpt h4{
-    margin: 0;
-    text-align: justify;
-    font-size: 85%;
-}
-div.excerpt p{
-    font-weight: normal;
-}
-
-code{
-    color: #000;
-    font-weight: bold;
-    font-size: 90%;
-}
-
-/* Articles and pages */
-div.main-article{
-    font-weight: normal;
-    text-align: left;
-    padding-bottom: 2em;
-    word-spacing: 0.2em;
-}
-div.main-article h1{
-    text-align: center;
-}
-div.main-article h2{
-    font-size: 1.25em;
-    margin-top: 1em;
-    margin-bottom: 0.2em;
-    font-weight: bold;
-    color: #000;
-}
-div.content h2.article-subtitle{
-    font-family: 'Yanone Kaffeesatz', Serif;
-    font-weight: normal;
-    text-align: left;
-    margin: 0;
-}
-div.main-article h2.article-subtitle{
-    text-align: center;
-}
-div.main-article h3{
-    font-size: 1.1em;
-    font-weight: bold;
-    color: #000;
-    line-height: 1.5em;
-    margin-bottom: 0.1em;
-    margin-top: 1em;
-}
-div.main-article h4{
-    font-size: inherit;
-    margin-bottom: 0.1em;
-    margin-top: 1em;
-    font-weight: bold;
-    color: #000;
-    font-variant: small-caps;
-}
-div.main-article p.metadata{
-    text-align: center;
-}
-div.main-article img.article-image{
-    margin-top: 1em;
-    margin-bottom: 1em;
-}
-div.main-article ul{
-    padding-left: 2em;
-    list-style: outside disc;
-}
-div.main-article p.keep-reading{
-    margin-bottom: 0;
-}
-p.keep-reading{
-    clear: both;
-    font-weight: normal;
-    padding-top: 1em;
-    text-align: right;
-}
-div.main-article p.footnote{
-    clear: both;
-    font-size: 85%;
-    margin: 0.25em 0;
-}
-p.footnote sup{
-    color: #c72c20;
-}
-div.figure{
-    border: solid 4px #D8D8D8;
-    background-color: #D8D8D8;
-    margin: 0.5em;
-}
-div.figure p{
-    background-color: #FFF;
-    text-align: center;
-    margin: 0;
-}
-div.figure p.caption{
-    background-color: #D8D8D8;
-    color: #444;
-    text-align: left;
-    font-size: 85%;
-    padding: 0.5em 1em;
-}
-.formula{
-    text-align: center;
-}
-.formula strong{
-    font-weight:  bold;
-    color: #c72c20;
-}
-.main-article table{
-    border-collapse: collapse;
-    margin: 0 auto;
-    text-align: center;
-}
-.main-article table th{
-    border-bottom: solid 1px #c72c20;
-    font-weight: bold;
-    color: #000;
-}
-.main-article table td{
-    padding: 0.5em;
-}
-.main-article table td.description{
-    padding-right: 1em;
-    padding-left: 0;
-    vertical-align: top;
-}
-div.code{
-    line-height: 1.2em;
-    margin: 0 1em;
-    border-top: dashed 1px #CCC;
-    border-bottom: dashed 1px #CCC;
-    font-size: 90%;
-    overflow-x: auto;
-}
-div#disqus_thread{
-    margin-top: 2em;
-    border-top: solid 1px #CCC;
-}
-
-/* Archives */
-.archives table{
-    margin-bottom: 2em;
+table.archive{
     width: 100%;
 }
-.archives table td{
-    padding: 7px, 0;
+.archive td{
+    padding: 0.25em 0;
 }
-.archives td.year{
-    text-align: right;
-    font-size: 1em;
-}
-.archives td.month, .archives td.day{
-    font-size: 1em;
+td.year, td.location{
     text-align: right;
 }
-.archives td.day{
-    font-weight: normal;
-}
-.archives td.month, .archives td.year{
+td.year{
     font-weight: bold;
-    color: #000;
 }
-.archives td.article{
-    padding-left: 2em;
-    text-align: left;
+td.day, td.location{
+    color: #aaaaaa;
 }
-/*
- * Footer
- */
-div.footer{
-    clear: both;
-    color: #555;
-    font-size: 85%;
-    border-top: solid 1px #999;
-    margin: 0 auto;
-    text-align: left;
-    width: 960px;
+td.day{
+    padding-right: 0.5em;
 }
-div.footer p{
-    margin: 0;
-    margin-top: -1em;
-    height: 6em;
-    line-height: 6em;
+.keep-reading{
+    text-align: right;
 }

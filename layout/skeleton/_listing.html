@@ -1,11 +1,8 @@
-{% extends "skeleton/_body.html"%}
+{% extends "skeleton/_base.html"%}
 
-{% block content_header %}
-{% endblock %}
-{% block content_body %}
-<div class="content alignright main-article archives">
-    <h1>{{page.title}}</h1>
-    <table class='archive'>
+{% block content %}
+<h1>{{page.title}}</h1>
+<table class='archive'>
 {% for node in page.node.walk %}
     {% with node.ancestors|length as depth%}
         {% ifequal depth 4 %}
@@ -20,6 +17,5 @@
         {% endifequal %}
     {% endwith %}
 {% endfor %}
-    </table>
-</div>
+</table>
 {% endblock %}

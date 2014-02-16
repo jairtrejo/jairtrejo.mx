@@ -3,11 +3,27 @@
 <head>
     <meta charset="UTF-8" />
     <title>{% block title %}Jair Trejo{% endblock %}{% if page.title %} :: {{ page.title }}{% endif %}</title>
+    <link href="{{ site.url }}/blog/atom.xml" rel="alternate" title="{{ site.name }}" type="application/atom+xml"/>
+    <link rel="shortcut icon" href="{{ site.url }}/favicon.ico" />
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans:400,700" rel="stylesheet" type="text/css">
     <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ site.url }}/media/css/pygments.css" type="text/css" media="screen" charset="utf-8">
     <link href="{{ site.url }}/media/css/style.css" rel="stylesheet" type="text/css">
     <link href="{{ site.url }}/media/css/content.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-2221948-2']);
+      _gaq.push(['_setDomainName', '.jairtrejo.mx']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
 </head>
 <body>
     <div class="container">
@@ -29,7 +45,7 @@
                 <a href="http://twitter.com/jairtrejo"><i class="fa fa-fw fa-twitter"></i></a>
                 <a href="http://github.com/jairtrejo"><i class="fa fa-fw fa-github-alt"></i></a>
                 <a href="http://mx.linkedin.com/in/jairtrejo/"><i class="fa fa-fw fa-linkedin-square"></i></a>
-                <a href="mailto:jair@jairtrejo.mx"><i class="fa fa-fw fa-envelope"></i></a>
+                <a href="mailto:&#106;air&#64;jairtrejo&#46;&#109;x"><i class="fa fa-fw fa-envelope"></i></a>
             </p>
         </div>
     </div>

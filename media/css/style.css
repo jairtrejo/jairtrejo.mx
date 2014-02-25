@@ -125,6 +125,12 @@ td.day{
 .keep-reading{
     text-align: right;
 }
+.keep-reading a{
+    color: #aaaaaa;
+}
+.keep-reading a i{
+    color: #e74c3c;
+}
 .post-link{
     margin: 15px 0 30px 0;
 }

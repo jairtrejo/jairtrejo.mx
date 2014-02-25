@@ -134,3 +134,17 @@ td.day{
 .post-link{
     margin: 15px 0 30px 0;
 }
+
+/* Social links */
+a .fa-twitter{
+    color: #00acde;
+}
+a .fa-github-alt{
+    color: #333333;
+}
+a .fa-linkedin-square{
+    color: #0e76a8;
+}
+a .fa-pinterest{
+    color: #c8232c;
+}

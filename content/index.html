@@ -16,7 +16,7 @@
 {% endwith %}
 
 {% for post in recents|slice:"1:" %}
-<p>
+<p class="post-link">
     <span class="date"><time pubdate>{{ post.created|date:"N m, Y" }}</time></span> <a href="{{ post.url }}">{{ post.title }}</a>
 </p>
 {% endfor %}

@@ -1,0 +1,50 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "PyCon 2014 recap"
+    created: 2014-04-17 15:05:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+I had the opportunity to be in Montréal from April 9 to April 15 for the awesome [PyCon&nbsp;2014](https://us.pycon.org/2014/). Being my first "global" PyCon, and with the excellent experience of [PyCon APAC 2013](http://jairtrejo.mx/talks/fabric-for-fun-and-profit), my hopes were very high for this to be an awesome conference.
+
+I am happy to say I wasn't disappointed! I had great fun, had interesting conversations with awesome people and watched some really thought provoking talks. I even won a [Wingware](http://wingware.com/) license in the PyLadies auction's raffle!
+{% endexcerpt %}
+
+<div class='figure'>
+    <img class='article-image centered' src='{{site.url}}/media/images/posts/me-in-montreal.jpg' />
+</div>
+
+Some of my favorite talks, which you can watch in [PyVideo](http://pyvideo.org/category/50/pycon-us-2014/files), were:
+
+## Web programming
+
+[So you want to be a full-stack developer? How to build a full-stack python web application](http://pyvideo.org/video/2591/so-you-want-to-be-a-full-stack-developer-how-to), by Kate Heddleston, was an amazing exploration of what a "full stack" means and what people is doing about each of the pieces. Of particular note are her [really cool diagrams](https://github.com/heddle317/full-stack-resources), including one of [all talks in PyCon 2014 mapped to their place in the stack](https://github.com/heddle317/full-stack-resources/tree/master/talk_maps), and of course her hilarious song about the basic stack to the tune of "The Brady Bunch" theme. I can't wait to make it my ringtone.
+
+[A scenic drive through the Django request-response cycle](http://pyvideo.org/video/2644/a-scenic-drive-through-the-django-request-respons) analyzed how Django handles a web request and returns a web response, showing all the hooks in between, and how they can be useful for web applications.
+
+[Designing Django's migrations](http://pyvideo.org/video/2630/designing-djangos-migrations) got me really excited about "native" migrations in Django 1.7 and how easy and pleasant they will be to use, but also explains how they achieve that through some very clever design decisions.
+
+## Python internals
+
+[Getting Hy on Python: How to implement a Lisp front-end to Python](http://pyvideo.org/video/2616/getting-hy-on-python-how-to-implement-a-lisp-fro) by Paul Tagliamonte went into great detail about Python internals, highlighting the numerous hooks and extension facilities that make it feasible to implement a completely different syntax on top of CPython.
+
+[Building and breaking a Python Sandbox](http://pyvideo.org/video/2585/building-and-breaking-a-python-sandbox) by Jessica McKellar also took an interesting problem (the construction of an incrementally more secure Python sandbox) and use it as a guide to explore more cool details of Python internals.
+
+[Fast Python, slow Python](http://pyvideo.org/video/2627/fast-python-slow-python) by Alex Gaynor dispelled many myths about Python performance and gave interesting tips on how being explicit about what you are doing can make plain Python code perform better.
+
+## Other things
+
+[John Perry Barlow's keynote](http://pyvideo.org/video/2587/keynote-john-perry-barlow) touched on the relevance of tech communities in enabling the dream of a diverse, internet-powered global community. Communities that rally around technical interests have a better shot at being diverse, and I believe that the Python community is going in the right direction on this. This was a very diverse conference in terms of gender, race, age, occupations and even technical interests.
+
+The birth and death of JavaScript, by [Gary Bernhardt](https://twitter.com/garybernhardt) was either a dystopian science fiction story on how we'll let yet another abstraction creep up on our computers, a hopeful tale of the demise of JavaScript through the rise of JavaScript, or an intriguing architectural speculation. Perhaps the three of them.
+
+[Technical on-boarding, training and mentoring](http://pyvideo.org/video/2661/technical-on-boarding-training-and-mentoring) by Kate Heddleston and Nicole Zuckerman gave some very well fundamented recommendations on how to get engineers quickly and effectively up to speed when they join your company.
+
+[See docs run. Run, docs, run!](http://pyvideo.org/video/2638/see-docs-run-run-docs-run) by Catherine Devlin was about the ida of making docs "runnable": as doctest strings, IPython notebooks and such. She thinks it makes it easier to keep code and documentation in sync and to integrate docs into the code testing and verification process.
+
+All in all, it was an amazing experience and I hope to visit Montréal again next year for PyCon 2015. I hope I'll have time to stay for the sprints!
+
+{% endarticle %}
+{% endblock %}

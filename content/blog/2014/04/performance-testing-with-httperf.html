@@ -7,7 +7,7 @@
 {% block article %}
 {% article %}
 {% excerpt %}
-At [Vinco Orbis](http://www.vincoorbis.com) we recently build a web service that in turn queries through HTTP some other services and returns a list of those for which the query was successful. It looked something like this:
+At [Vinco Orbis](http://www.vincoorbis.com) we recently build a web service that in turn queries some other services through HTTP and returns a list of those for which the query was successful. It looked something like this:
 {% syntax python %}
 import requests
 
@@ -79,9 +79,9 @@ Session failtime [s]: 0.0
 Session length histogram: 0 150
 {% endsyntaxwithoptions %}
 
-On line 8 we can see that the server can answer an average of 0.3 requests per second, each one taking 3136.5 ms.
+On **line 8** we can see that the server can answer an average of 0.3 requests per second, each one taking 3136.5 ms.
 
-On line 14 we can see a breakdown of the status codes returned by the service; apparently there was 149 `200 OK` responses and one `500` error.
+On **line 14** we can see a breakdown of the status codes returned by the service; apparently there was 149 `200 OK` responses and one `500` error.
 
 I made my code asynchronous with [`requests_futures`](https://github.com/ross/requests-futures); a simple wrapper around Kenneth Reitz's [`requests`](http://docs.python-requests.org/en/latest/) library that combines it with [Python 3.2+ futures implementation](https://docs.python.org/release/3.2.5/library/concurrent.futures.html). The futures library has been [backported to Python 2.7](https://pypi.python.org/pypi/futures), so even if you are still using Python 2 you can check it out.
 
@@ -121,4 +121,3 @@ So, if you are building a web service and you are worried about performance, you
 
 {% endarticle %}
 {% endblock %}
-

@@ -56,6 +56,9 @@ a:hover{
 h1, h2, h3, h4{
     font-family: "Montserrat", "Serif";
 }
+h1 strong, h2 strong, h3 strong, h4 strong{
+    color: #e74c3c;
+}
 h1{
     font-size: 30px;
     text-align: center;

@@ -5,17 +5,25 @@
 %}
 
 {% block content %}
-{% recent_posts recents 6 %}
+{% markdown %}
 
-{% with recents|first as post %}
-<h1>{{ post.title }}</h1>
-{% if post.subtitle %}<h2 class="subtitle">{{ post.subtitle }}</h2>{% endif %}
-<p class="date"><time pubdate>{{ post.created|date:"l F d, Y" }}</time></p>
-{% render_excerpt post 1000 %}
-<p class='keep-reading'><a href='{{ post.url }}'>Keep reading <i class="fa fa-fw fa-chevron-right"></i></a></p>
-{% endwith %}
+# Hi, I am Jair Trejo <strong>!</strong>
 
-{% for post in recents|slice:"1:" %}
+I am a web project developer, manager and consultant. I have been developing software professionally for the past four years, mostly on the web, but my interest in programming is a life-long affair.
+
+In this website you can [find out more about me]({{ site.url }}/about), read my [blog]({{ site.url }}/blog) or look at [talks]({{ site.url }}/talks) that I have given in the past.
+
+If you need to contact me, feel free to shoot me an e-mail at [&#106;air&#64;jairtrejo&#46;&#109;x](mailto:&#106;air&#64;jairtrejo&#46;&#109;x).
+
+You can also follow me on [Twitter](http://twitter.com/jairtrejo), check the cool UI ideas I collect on [Pinterest](http://www.pinterest.com/jairtrejo/), take a look at my open source code on [Github](http://github.com/jairtrejo) or check my professional profile on [LinkedIn](http://mx.linkedin.com/in/jairtrejo/).
+
+{% endmarkdown %}
+
+{% recent_posts recents 3 %}
+
+<h2>From the blog</h2>
+
+{% for post in recents %}
 <p class="post-link">
     <span class="date"><time pubdate>{{ post.created|date:"N m, Y" }}</time></span> <a href="{{ post.url }}">{{ post.title }}</a>
 </p>

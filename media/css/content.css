@@ -13,6 +13,9 @@
     padding-left: 1em;
     padding-right: 1em;
 }
+.lineno{
+    color: #CCC;
+}
 code{
     background-color: #f8f8ff;
     font-weight: bold;

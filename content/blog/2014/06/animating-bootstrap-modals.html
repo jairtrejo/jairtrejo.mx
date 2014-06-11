@@ -1,0 +1,52 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "Animating Bootstrap modals with Bounce.js"
+    created: 2014-06-10 23:37:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+[Bounce.js](http://bouncejs.com) is an awesome tool by [Joel Besada](http://joelb.me/) for designing CSS3 animations. It is very well designed and both easy and pleasant to use; I believe it is a great first step into providing a true "design in the browser" experience for animation design.
+
+{% endexcerpt %}
+
+You define animations using basic building blocks: scaling, translation, rotation and skewing. For each of these you can control the easing, duration and "bounciness" (both in the number of bounces and the stiffness with which they are damped). By specifying a delay, multiple animations can be staggered to achieve more complex effects.
+
+The included presets give a fairly good idea of the possibilities. Animations like "Jelly" or "Smack" achieve a very organic quality through very simple transformations, and others like "Slinky" compose their way into long movements.
+
+The interface itself makes a very elegant use of animation; the empty state of the animations columns gently bobs up and down to catch your attention, and if you try to play an animation before defining it the relevant buttons pulse quite evidently.
+
+The end product is a keyframe-defined CSS3 animation. It is made of a series of 3D Matrix tranforms, so hardware acceleration makes it run very smoothly, and ready to use in an almost drop-in manner.
+
+For instance, applying the "Smack" animation to [Bootstrap 3](http://getbootstrap.com/) modals is as easy as copying and pasting the generated CSS, and applying it to the correct target:
+
+{% syntax css %}
+/* Changed from .animation-target */
+.modal.in {
+  -webkit-animation: animation 750ms linear both;
+  animation: animation 750ms linear both;
+}
+
+/*
+* The animation parameters are encoded in the URL, so you can return
+* and tweak the animation as much as you like.
+*/
+/* Generated with Bounce.js. Edit at http://bouncejs.com/#{s:[{T:"k",e:"s",d:750,D:0,f:{x:0,y:0},t:{x:40,y:60},s:3,b:4},{T:"c",e:"b",d:750,D:0,f:{x:1,y:1},t:{x:2,y:2},s:2,b:4}]} */
+
+@-webkit-keyframes animation {
+    /* Lots of keyframes */
+}
+
+@keyframes animation {
+    /* Lots of webkit-prefixed keyframes */
+}
+{% endsyntax %}
+
+Which gives you a much cooler animation than the default fade in.
+
+Making all your modals a little wobbly is very cool, but perhaps not very useful. However, there is more to animations than just "coolness": you can use different animations to distinguish different kinds of dialogs, to contextually call attention to important elements in your page, or to ease the state transitions of single page applications.
+
+There is a lot of possibilities, and Bounce.js can help you try out your ideas and incorporate them to your projects right away.
+{% endarticle %}
+{% endblock %}

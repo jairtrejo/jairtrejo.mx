@@ -25,7 +25,7 @@ You can also follow me on [Twitter](http://twitter.com/jairtrejo), check the coo
 
 {% for post in recents %}
 <p class="post-link">
-    <span class="date"><time pubdate>{{ post.created|date:"N m, Y" }}</time></span> <a href="{{ post.url }}">{{ post.title }}</a>
+    <span class="date"><time pubdate>{{ post.created|date:"N d, Y" }}</time></span> <a href="{{ post.url }}">{{ post.title }}</a>
 </p>
 {% endfor %}
 

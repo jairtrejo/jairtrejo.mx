@@ -1,0 +1,646 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "Baby steps with gulp.js"
+    created: 2014-11-10 18:46:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+I am working on a little front-end project to learn [Backbone.js](http://backbonejs.org), and [this presentation by Addy Osmani](https://speakerdeck.com/addyosmani/front-end-tooling-workflows) convinced me to invest the time to set up a proper continuous build workflow.
+
+I tried several templates, but they all seemed unnecesarily complicated, dependency heavy, and full of features I don't really need. So I decided to build my own setup from scratch trying to keep things as simple as possible.
+
+The goal was to have a build setup with:
+
+- HTML minification.
+- JavaScript and CSS minification and concatenation.
+- Source map support.
+- Simple client-side dependency installation with [Bower](http://bower.io).
+- [Bootstrap](http://getbootstrap.com) as a [less mixin library](http://transmission.vehikl.com/using-bootstrap-as-a-semantic-mixin-library/).
+- [BrowserSync](http://browsersync.io) support. Any live reload tool would do, but BrowserSync looks cool.
+
+The final template is available at [http://github.com/jairtrejo/simple-gulp-template](http://github.com/jairtrejo/simple-gulp-template).
+
+{% endexcerpt %}
+
+## Initial setup
+
+First I had to install [nodejs](http://nodejs.org), which was simple enough to do from the official website. Next I had to create a node package so that I could use `npm` to manage my development dependencies.
+
+{% syntax bash %}
+$ npm init
+{% endsyntax%}
+
+I answered the questions and it generated a `package.json` in my working directory.
+
+Next I chose [gulp.js](http://gulpjs.com) as my build tool. I found it easier to understand than `grunt` and it seems faster, too. I installed it with:
+
+{% syntax bash %}
+$ sudo npm install -g gulp
+$ npm install --save-dev gulp
+{% endsyntax %}
+
+This installs gulp globally (to be able to use the command line tool) and locally (to be able to `require()` it in our Gulpfile).
+
+Finally I installed bower for fetching client-side packages.
+
+{% syntax bash %}
+$ sudo npm install -g bower
+$ npm install --save-dev bower
+{% endsyntax%}
+
+## HTML minification
+
+Just to check that everything was working I wrote a very simple `Gulpfile.js` with just one task to minify my HTML.
+
+{% syntax js %}
+var gulp       = require("gulp"),
+    minifyHTML = require("gulp-minify-html");
+
+var config = {
+    paths: {
+        html: {
+            src:  ["src/**/*.html"],
+            dest: "build"
+        },
+    }
+}
+
+gulp.task("html", function(){
+    return gulp.src(config.paths.html.src)
+        .pipe(minifyHTML())
+        .pipe(gulp.dest(config.paths.html.dest));
+});
+{% endsyntax %}
+
+First I `require()` the gulp API and the `gulp-minify-html` plugin.
+
+Next I define a `config` var just to keep all magic values in one place.
+
+Finally I define a task named `html` that gathers all files under `src` and all of its subdirectories, as specified by the `src/**/*.html` glob. It then pipes them through the minification task and finally outputs them to the `build` directory.
+
+I had to install `gulp-minify-html` (and save it as a dependency) by running:
+
+{% syntax bash %}
+$ npm install --save-dev gulp-minify-html
+{% endsyntax %}
+
+And then I created a `src` directory and placed the following `index.html` inside.
+
+{% syntax html %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Baby steps</title>
+</head>
+<body>
+    <h1>Hello, world!</h1>
+</body>
+</html>
+{% endsyntax %}
+
+I ran the task in the command line:
+
+{% syntax bash %}
+$ gulp html
+{% endsyntax %}
+
+And sure enough, a minified `index.html` appeared inside the `build` folder.
+
+{% syntax html%}
+<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><title>Baby steps</title></head><body><h1>Hello, world!</h1></body></html>
+{% endsyntax %}
+
+## JavaScript and CSS minification
+
+Next up, I wrote tasks for concatenating and minifying my scripts and styles.
+
+{% syntax javascript %}
+var gulp       = require("gulp"),
+    minifyHTML = require("gulp-minify-html"),
+    concat     = require("gulp-concat"),
+    uglify     = require("gulp-uglify"),
+    cssmin     = require("gulp-cssmin");
+
+var config = {
+    paths: {
+        html: {
+            src:  ["src/**/*.html"],
+            dest: "build"
+        },
+        javascript: {
+            src:  ["src/js/**/*.js"],
+            dest: "build/js"
+        },
+        css: {
+            src: ["src/css/**/*.css"],
+            dest: "build/css"
+        }
+    }
+}
+
+gulp.task("html", function(){
+    return gulp.src(config.paths.html.src)
+        .pipe(minifyHTML())
+        .pipe(gulp.dest(config.paths.html.dest));
+});
+
+gulp.task("scripts", function(){
+    return gulp.src(config.paths.javascript.src)
+        .pipe(uglify())
+        .pipe(concat("app.min.js"))
+        .pipe(gulp.dest(config.paths.javascript.dest));
+});
+
+gulp.task("css", function(){
+    return gulp.src(config.paths.css.src)
+        .pipe(cssmin())
+        .pipe(gulp.dest(config.paths.css.dest));
+});
+
+gulp.task("default", ["html", "scripts", "css"]);
+{% endsyntax %}
+
+They simply gather all the files and pass them through the relevant minifiers. For JavaScript files I also concatenate them with `gulp-concat`.
+
+I added a CSS file in `src/css` and a JavaScript file in `src/js`.
+
+{% syntax css %}
+/* src/css/main.css */
+h1{
+    color: #C00;
+}
+{% endsyntax %}
+{% syntax javascript %}
+/* src/js/app.js */
+var msg = "Hello";
+
+console && console.log(msg);
+{% endsyntax %}
+
+And ammended my `index.html` to include the resulting assets.
+
+{% syntax html %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Baby steps</title>
+    <link href="css/main.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h1>Hello, world!</h1>
+    <script type="text/javascript" src="js/app.min.js"></script>
+</body>
+</html>
+{% endsyntax %}
+
+I ran an http server on the `build` directory:
+
+{% syntax bash %}
+$ python -m SimpleHTTPServer 8000
+{% endsyntax %}
+
+And in a separate shell I installed all the new dependencies and ran my `default` task, that just combines all of the others:
+
+{% syntax bash %}
+$ npm install --save-dev gulp-concat gulp-uglify gulp-cssmin
+$ gulp
+{% endsyntax %}
+
+Upon navigating to [http://localhost:8000](http://localhost:8000) a red "Hello, world!" greeted me in the browser and a "Hello" was printed to the JS console.
+
+## Source maps
+
+If you check the console output in the browser, you'll note that the message is said to come from `app.min.js`, line 1. Of course, `app.min.js` is the final, minified file with everything in one line. Wouldn't it be cool to know where was the message logged in the original source code file?
+
+<img class="article-image centered" src="{{site.url}}/media/images/posts/without-sourcemaps.png" />
+
+Source maps let you know just that. They are a way to annotate generated code with a mapping of the corresponding places in the original source. There are source maps for both JavaScript and CSS, and it works not only with minifyers, but also with preprocessors and even compilers from other languages.
+
+The `gulp-sourcemaps` plugin provides source map output for supported gulp transformations. It is very easy to use: You pass your gathered files through `sourcemaps.init`, apply the transformations and hand them to `sourcemaps.write`.
+
+My `scripts` and `css` tasks ended up like this:
+
+{% syntax javascript %}
+var sourcemaps = require("gulp-sourcemaps");
+
+gulp.task("scripts", function(){
+    return gulp.src(config.paths.javascript.src)
+        .pipe(sourcemaps.init())
+        .pipe(concat("app.min.js"))
+        .pipe(uglify())
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(config.paths.javascript.dest));
+});
+
+gulp.task("css", function(){
+    return gulp.src(config.paths.css.src)
+        .pipe(sourcemaps.init())
+        .pipe(concat("main.min.css"))
+        .pipe(cssmin())
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(config.paths.css.dest));
+});
+{% endsyntax %}
+
+And if we install `gulp-sourcemaps` and run the default task again:
+
+{% syntax bash %}
+$ npm install --save-dev gulp-sourcemaps
+$ gulp
+{% endsyntax %}
+
+We can refresh the page and see that the line number in the original file is correctly reported.
+
+<img class="article-image centered" src="{{site.url}}/media/images/posts/with-sourcemaps.png" />
+
+## Front-end package management with Bower
+
+Bower is a very simple tool for downloading and managing front-end libraries. It lets you specify your library dependencies in a manifest file, fetches them and makes them available to your build tool.
+
+I created the manifest file with:
+
+{% syntax bash %}
+$ bower init
+{% endsyntax %}
+
+And then proceeded to install my dependencies:
+
+{% syntax bash %}
+$ bower install --save backbone
+{% endsyntax %}
+
+Notice that it is `--save` and not `--save-dev`, because this component will eventually go into the `build` directory.
+
+I now needed a task for copying the files to the `build` directory. The `main-bower-files` module checks your `bower.json` and recursively generates an `src` glob with all the main files specified by your production dependencies. The task feeds that to gulp to copy to the appropiate place.
+
+{% syntax javascript %}
+var mainBowerFiles = require("main-bower-files");
+
+gulp.task("bower", function(){
+    return gulp.src(mainBowerFiles(), {base: "bower_components"})
+        .pipe(gulp.dest(config.paths.bower.dest));
+});
+{% endsyntax %}
+
+The `index.html` file should be amended to include this new front-end files. It can be done by hand, but that is cumbersome and prone to error, so I let the `gulp-inject` plugin help me with that. I had to insert placeholders in `index.html` for where the injected references will go:
+
+{% syntax html %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Baby steps</title>
+    <!-- bower:css -->
+    <!-- endinject -->
+    <link href="css/main.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h1>Hello, world!</h1>
+    <!-- bower:js -->
+    <!-- endinject -->
+    <script type="text/javascript" src="js/app.min.js"></script>
+</body>
+</html>
+{% endsyntax %}
+
+And I modified the HTML processing task to inject the references:
+
+{% syntax javascript %}
+var mainBowerFiles = require("main-bower-files"),
+    inject         = require("gulp-inject");
+
+gulp.task("html", function(){
+    return gulp.src(config.paths.html.src)
+        .pipe(inject(
+            gulp.src(
+                mainBowerFiles(),
+                {read: false, cwd: "bower_components"}
+            ),
+            {name: "bower", addPrefix: "lib"}
+        ))
+        .pipe(minifyHTML())
+        .pipe(gulp.dest(config.paths.html.dest));
+});
+{% endsyntax %}
+
+The `inject` function takes an `src` generated stream and some options, and inserts references to those assets into the piped HTML files.
+
+The task generates the stream from the `main-bower-files` output, but sets `bower_components` as the `cwd` to start paths from inside there. The task is only interested in the paths, not the contents, so to speed things up the `read: false` option is passed.
+
+The `name` option passed to `inject` specifies a name for this group of files in the placeholder, and the `addPrefix` option makes the paths start in the proper place inside `build`.
+
+After installing the new dependencies I ran the default task again:
+
+{% syntax bash %}
+$ npm install --save-dev main-bower-files gulp-inject
+$ gulp
+{% endsyntax %}
+
+And the references to Backbone and Underscore were correctly inserted into the HTML.
+
+The cool thing is that this setup "just works" for other Bower packages. For instance, to use [FontAwesome](http://fortawesome.github.io/Font-Awesome/) I just installed it:
+
+{% syntax bash %}
+$ bower install --save font-awesome
+{% endsyntax %}
+
+And I was able to use it right away:
+
+{% syntax html %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Baby steps</title>
+    <!-- bower:css -->
+    <!-- endinject -->
+    <link href="css/main.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h1>Hello, world! <i class="fa fa-thumbs-up"></i></h1>
+    <!-- bower:js -->
+    <!-- endinject -->
+    <script type="text/javascript" src="js/app.min.js"></script>
+</body>
+</html>
+{% endsyntax %}
+
+By running `gulp` again and refreshing the browser, the page gave me the thumbs up.
+
+<img class="article-image centered" src="{{site.url}}/media/images/posts/thumbs-up.png" />
+
+## Bootstrap as a less mixin library
+
+This is something I have wanted to do for a very long time. I love Bootstrap, it is a very cool default for quick projects and provides a great foundation for styling. But it's unsemantic classes have allways rubbed me the wrong way. Take, for instance:
+
+{% syntax html%}
+<button class="btn btn-warning btn-lg">Call now!<button>
+{% endsyntax %}
+
+Both `btn` and `btn-lg` are there just for making the button look a certain way. There is some semantic value in `btn-warning`, but really, I just want the button to be orange. It is a succint and responsive version of using the `style` attribute.
+
+Wouldn't it be better to have something like this?
+
+{% syntax html%}
+<button class="call-to-action">Call now!<button>
+{% endsyntax %}
+
+For that I had to use Bootstrap as a less library (as explained in [this great article](http://transmission.vehikl.com/using-bootstrap-as-a-semantic-mixin-library/)), which is simple to do with gulp. First I installed the dependency with bower:
+
+{% syntax bash %}
+$ bower install --save bootstrap
+{% endsyntax %}
+
+But I didn't need everything from the package, just the fonts and the JavaScript, because I wanted to compile the less myself. It is possible to specify which files should be picked by `main-bower-files` with the `overrides` option in `bower.json`.
+
+{% syntax json %}
+{
+  "name": "hello-world",
+  "version": "0.0.0",
+  "authors": [
+    "Jair Trejo <jair@jairtrejo.mx>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "backbone": "~1.1.2",
+    "font-awesome": "~4.2.0",
+    "bootstrap": "~3.3.0"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/fonts/**", "dist/js/bootstrap.min.js"
+      ]
+    }
+  }
+}
+{% endsyntax %}
+
+Now, for the less side of things, I used the `gulp-less` plugin and wrote a new task for compiling less files into a `main.min.css` file.
+
+{% syntax javascript %}
+gulp.task("less", function(){
+    return gulp.src(config.paths.less.src)
+        .pipe(sourcemaps.init())
+        .pipe(less({
+            paths: ["bower_components/bootstrap/less"]
+        }))
+        .pipe(concat("main.min.css"))
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(config.paths.css.dest));
+});
+{% endsyntax %}
+
+I am passing `bower_components/bootstrap/less` as a path to `less` in order to have it available as a context for `@import`.
+
+Since I am now using less I don't really need the `css` task any more. I left it in the Gulpfile to minify and copy any css files in the `src/css` directory, but I removed the concatenation part.
+
+Now we can write a `src/less/main.less` file and use Bootstrap classes as mixins.
+{% syntax scss %}
+@import "bootstrap";
+
+.call-to-action{
+    .btn;
+    .btn-lg;
+    .btn-warning;
+}
+{% endsyntax %}
+
+And use it on `index.html`:
+
+{% syntax html %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Baby steps</title>
+    <!-- bower:css -->
+    <!-- endinject -->
+    <link href="css/main.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h1>Hello, world! <i class="fa fa-thumbs-up"></i></h1>
+    <button class="call-to-action">Call now!</button>
+    <!-- bower:js -->
+    <!-- endinject -->
+    <script type="text/javascript" src="js/app.min.js"></script>
+</body>
+</html>
+{% endsyntax %}
+
+After installing the dependencies and running the task again, I could refresh the page and see that the call to action was now big, orange and semantic.
+
+<img class="article-image centered" src="{{site.url}}/media/images/posts/bootstrap-cta.png" />
+
+However, the `@ìmport "bootstrap"` line causes all of Bootstrap to be included in the `main.min.css` file. This can be improved by creating a custom `bootstrap.less` file that imports base styles (like the CSS reset, the grid, etc.) but only *references* the specific ones (like button styles, alerts, etc.). This means that specific styles will only be included if they are used in `main.less`.
+
+To achieve this I pasted the `bootstrap.less` proposed by Adam in `src/less/includes`:
+
+{% syntax scss %}
+@import "normalize.less";
+@import "print.less";
+@import "type.less";
+@import "code.less";
+@import "tables.less";
+@import "forms.less";
+@import "scaffolding.less";
+
+@import (reference) "variables.less";
+@import (reference) "mixins.less";
+@import (reference) "grid.less";
+@import (reference) "buttons.less";
+@import (reference) "component-animations.less";
+@import (reference) "glyphicons.less";
+@import (reference) "dropdowns.less";
+@import (reference) "button-groups.less";
+@import (reference) "input-groups.less";
+@import (reference) "navs.less";
+@import (reference) "navbar.less";
+@import (reference) "breadcrumbs.less";
+@import (reference) "pagination.less";
+@import (reference) "pager.less";
+@import (reference) "labels.less";
+@import (reference) "badges.less";
+@import (reference) "jumbotron.less";
+@import (reference) "thumbnails.less";
+@import (reference) "alerts.less";
+@import (reference) "progress-bars.less";
+@import (reference) "media.less";
+@import (reference) "list-group.less";
+@import (reference) "panels.less";
+@import (reference) "wells.less";
+@import (reference) "close.less";
+@import (reference) "modals.less";
+@import (reference) "tooltip.less";
+@import (reference) "popovers.less";
+@import (reference) "carousel.less";
+@import (reference) "utilities.less";
+@import (reference) "responsive-utilities.less";
+{% endsyntax %}
+
+The files in `includes` are meant to be imported, not directly compiled, so I needed to ignore them in the `less` task:
+
+{% syntax javascript %}
+var config = {
+    paths: {
+
+        // ...
+
+        less: {
+            src: ["src/less/**/*.less", "!src/less/includes/**"],
+            dest: "build/css"
+        },
+
+        // ...
+
+    }
+}
+{% endsyntax %}
+
+And I changed the `@import` line in `main.less` to import the custom file:
+
+{% syntax scss %}
+@import "includes/bootstrap";
+
+.call-to-action{
+    .btn;
+    .btn-lg;
+    .btn-warning;
+}
+{% endsyntax %}
+
+This reduces the file size of `main.min.css` from 489 KB to 237 KB.
+
+## BrowserSync support
+
+[BrowserSync](http://browsersync.io) is an amazing static server that allows you to browse your website accross many devices at the same time. It keeps track of your clicks, scrolls and other actions, and syncs them accross devices. Working with your build tool it can provide browser reloading on file changes and CSS injection without reloading the page.
+
+I first wrote a task for starting the BrowserSync server:
+
+{% syntax javascript %}
+gulp.task("browser-sync", function() {
+    browserSync({
+        server: {
+            baseDir: "./build"
+        }
+    });
+});
+{% endsyntax %}
+
+Simple enough. Now I needed to ask BrowserSync to reload whenever a file changes. For that I used gulp's `watch` method. The new `default` task looks like this:
+
+{% syntax javascript %}
+gulp.task("default", ["bower", "html", "scripts", "css", "less", "browser-sync"], function(){
+    gulp.watch(config.paths.html.src, ["html", browserSync.reload]);
+    gulp.watch(config.paths.javascript.src, ["scripts", browserSync.reload]);
+    gulp.watch(config.paths.bower.src, ["bower", browserSync.reload]);
+
+    gulp.watch(config.paths.css.src, ["css"]);
+    gulp.watch(config.paths.less.src, ["less"]);
+});
+{% endsyntax %}
+
+It depends on all of the other tasks, including BrowserSync, so Gulp will run them all before getting to this one.
+
+It first configures a watch on files that require a hard reload. Whenever any of them changes, the corresponding task is run and once it is finished a signal is sent to the browser to reload the page.
+
+The watches for CSS and less just run the processing task. I modified the tasks to stream the resulting CSS to the clients without reloading the page.
+
+{% syntax javascript %}
+gulp.task("css", function(){
+    return gulp.src(config.paths.css.src)
+        .pipe(sourcemaps.init())
+        .pipe(cssmin())
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(config.paths.css.dest))
+        .pipe(browserSync.reload({stream: true}));
+});
+
+gulp.task("less", function(){
+    return gulp.src(config.paths.less.src)
+        .pipe(sourcemaps.init())
+        .pipe(less({
+            paths: ["bower_components/bootstrap/less"]
+        }))
+        .pipe(concat("main.min.css"))
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(config.paths.css.dest))
+        .pipe(filter("**/*.css"))
+        .pipe(browserSync.reload({stream: true}));
+});
+{% endsyntax %}
+
+The less task uses `gulp-filter` to pass only the css result to BrowserSync.
+
+After installing the dependencies, running `gulp` processes all files, starts the server and opens a browser window.
+
+{% syntax bash %}
+$ npm install --save-dev browser-sync gulp-filter
+$ gulp
+{% endsyntax %}
+
+The console output has a section like this:
+
+{% syntax bash %}
+[BS] Local URL: http://localhost:3000
+[BS] External URL: http://192.168.1.67:3000
+[BS] Serving files from: ./build
+{% endsyntax %}
+
+You can visit the external URL in a different device, and it'll be in sync with your desktop browser. Clicks, scroll and form entry are mirrored accross devices, which helps with testing responsive websites.
+
+## In closing
+
+I was overwhelmed by all the gulp templates and generators out there, but it's actual API is so simple that it was very easy to cobble together my own build workflow. I hope that through explaining the process I can help other people jump into the build tool bandwagon.
+
+There are some other features I might add, like [browserify](http://browserify.org) support, image minification, etc., but I think this is a great starting point.
+
+The very simple template developed in this post is [available on GitHub](http://github.com/jairtrejo/simple-gulp-template).
+
+{% endarticle %}
+{% endblock %}

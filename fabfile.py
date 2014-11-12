@@ -19,6 +19,7 @@ def generate():
 def regen():
     clean()
     generate()
+    local('python archive-reorder.py')
 
 
 def serve():

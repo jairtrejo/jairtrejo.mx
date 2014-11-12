@@ -1,4 +1,5 @@
 fabric
 cherrypy
 django<1.7
+Pygments<2.0
 git+https://github.com/jairtrejo/hyde.git

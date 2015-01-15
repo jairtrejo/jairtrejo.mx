@@ -1,0 +1,99 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "A proper pull request"
+    created: 2015-01-14 19:26:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+What you write in the message of a pull request can be a powerful tool for improving the quality of both your work and your team communication.
+
+I have a simple format that has been useful for me in the past, and that people seem to like and adopt when they see it, so I decided to write this post to describe it and provide a couple of simple tools to help put it in practice.
+{% endexcerpt %}
+
+The aim of this format is to make you think about what you are trying to achieve, and help you express it in a way that might help others to understand it. It takes some time to sit and write about what you just did, but it really pays off in clarifying it for everyone, not the least yourself.
+
+In any case, I believe the sections I propose are things that you should probably be thinking about anyway.
+
+## The title
+
+Try to use something descriptive and distinctive as the title. Keep in mind that titles are meant to appear in listings, like email inboxes and lists of issues, so it's very useful if they are recognizable at a glance. On the other hand, being descriptive helps when refering to the PR out of context.
+
+## The sections
+
+These are meant to make up the body of the PR. I wrote a little bookmarklet that will prefill the headings for you on Github. I am sure it is trivial to adapt to other source code management platforms.
+
+{% syntax javascript %}
+var textArea = document.getElementById('pull_request_body');
+textArea.innerText = "##Tasks\n##Problem\n##Solution\n##Test plan\n##Notes";
+{% endsyntax %}
+
+Just drag it into your bookmarks bar and click on it when creating a PR.
+
+<div class="figure">
+    <p class="caption">
+        <a class="button-link" href="javascript:(function()%7Bvar%20textArea%20%3D%20document.getElementById('pull_request_body')%3BtextArea.innerText%20%3D%20%22%23%23Tasks%5Cn%23%23Problem%5Cn%23%23Solution%5Cn%23%23Test%20plan%5Cn%23%23Notes%22%7D)()">Prefill PR headings</a>
+    </p>
+</div>
+
+### "Tasks" section
+If you are using project management software, use this section to link to tasks related to this pull request. This provides a context for it, and is a good place for non-technical background.
+
+At [InstaEDU](http://instaedu.com) we use Asana, so I wrote a little bookmarklet that generates a markdown link to the current task, ready for copying and pasting into the PR.
+
+{% syntax javascript %}
+var taskName = document.getElementsByClassName('shadow header-name')[0].innerHTML;
+taskName = taskName.substring(0, taskName.length - 2);
+var taskURL = document.URL;
+window.prompt("Your task link", "- [" + taskName + "](" + taskURL + ")");
+{% endsyntax %}
+
+Drag it into your bookmarks bar and click on it when viewing an Asana task.
+
+<div class="figure">
+    <p class="caption">
+        <a class="button-link" href="javascript:(function()%7Bvar%20taskName%20%3D%20document.getElementsByClassName('shadow%20header-name')%5B0%5D.innerHTML%3BtaskName%20%3D%20taskName.substring(0%2C%20taskName.length%20-%202)%3Bvar%20taskURL%20%3D%20document.URL%3Bwindow.prompt(%22Your%20task%20link%22%2C%20%22-%20%5B%22%20%2B%20taskName%20%2B%20%22%5D(%22%20%2B%20taskURL%20%2B%20%22)%22)%7D)()">Link to task</a>
+    </p>
+</div>
+
+You can write something similar for whichever project management system you prefer.
+
+### "Problem" section
+
+This section is for stating the problem you re trying to solve, or the outcome you are trying to achieve. It is meant to be a technical description, as product justification and other non-technical context is usually on a task or issue somewhere else.
+
+For instance, if your product team asks for a way to notify users when their friends like their pictures, the problem description in the PR can be:
+
+> Development of a realtime notification system that can power both the website and the mobile app.
+
+Or if there is a bug where payments made after 8:00 p.m. are appearing as late payments:
+
+> Homologation of UTC date handling accross database and web servers.
+
+Just focus on the technical outcome the actual code is hoping to achieve.
+
+### "Solution" section
+
+Describe your implementation both for code review and for posterity. Provide an overview of what your code is doing, but also note important details that help understand it. If you are writing code that is meant to be used later (a utility CSS class, or maybe a new API method) this is a good place to explain it to other developers that might be interested.
+
+However, don't forget that the code itself is there to look at, so don't just translate it into english or restate the obvious.
+
+### "Test plan" section
+
+This is a checklist of all the things you did to ensure that your code is working. Writing it down is a great opportunity to actually make sure that it does.
+
+I like to split it into two sections, "Manual" for things I manually tested by using the software, and "Automatic" where I simply list the unit tests I created for the feature (or bug).
+
+For visual changes this is a great place to include before and after screenshots.
+
+I have found that this section really helps me think about how to test my code, and gives ideas to code reviewers on what other things they might want to try.
+
+## Other useful information
+
+There are other sections that you might internally decide to include. For instance, it could be useful to make a note whenever the PR would require changes to the deployment process, when it requires additional setup of the development environment, or is otherwise special. I tend to toss this sort of thing into an optional "Notes" section, but your team might want to add some permanent ones.
+
+If you think this format is useful, definitely give it a try. It does require a little more work, so it might be hard to convince your team mates to use it. I suggest you just start using it yourself; I have found that people quickly realize it's usefulness and start using it all by themselves.
+
+{% endarticle %}
+{% endblock %}

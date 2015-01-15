@@ -85,3 +85,13 @@ div#disqus_thread{
 .figure.alignright{
     margin-left: 1em;
 }
+.button-link {
+    padding: 10px 15px;
+    background: #C00;
+    color: #FFF;
+    border-bottom: solid 2px #A00;
+    border-radius: 2px;
+}
+.button-link:hover {
+    color: #FDD;
+}

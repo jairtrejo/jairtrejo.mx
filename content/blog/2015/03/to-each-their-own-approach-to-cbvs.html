@@ -1,0 +1,43 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "To each their own approach to class based views"
+    created: 2015-03-18 23:51:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+I read Luke Plant's article on [an alternate approach to Django class based views](http://lukeplant.me.uk/blog/posts/my-approach-to-class-based-views/), and although I sympathize with the spirit of it, I very much disagree on the specifics.
+{% endexcerpt %}
+
+I agree that there is room for improvement on Django's class based views. I would have preferred composable functions to treacherous class hierarchies (taxonomies are easier to get right in hindsight). And there are many common patterns that are made more verbose by this system: I certainly hate decorating `dispatch` just to make the view logged in only.
+
+I also agree with the broader point that when an API is cumbersome to use and requires much boilerplate, it is probably a good idea to replace it with one that makes better sense.
+
+> *[If you have to refer to the documentation every time you use a module, find (or build) a new module.](https://github.com/kennethreitz/python-for-humans/blob/master/python-for-humans/1_content.md#the-litmus-test)*
+
+Yet in general I find class based views more than tolerable, specially with helpers like [Django Braces](http://django-braces.readthedocs.org/en/latest/index.html). And in regard to the specific issues cited in the article, I think I would stick with the way class based views currently work.
+
+One of the few things I've always disliked about Django is that the same function was responsible for handling all requests to a URL, regardless of the HTTP method. For form handling, it conflates three very distinct use cases: rendering an empty form, rendering a partial form with errors, and actually handling the correct form. For non-form URLs that need to respond to several methods, the view would often end up being an if statement to manually dispatch to two entirely different functions.
+
+Having separate handlers for each HTTP method is a great feature. It makes it explicit which methods we want to handle, and which code handles which case. If there is duplicate code, we can refactor it in a named function, rather than relying on implementation details like the form failing validation when empty. A subtler advantage is that the framework handles the dispatching on an HTTP method, which is a general HTTP concern, and keeps your code focused on handling a particular request.
+
+As for the method of building the context dictionary, I agree that it is verbose:
+
+{% syntax python %}
+def get_context_data(self, **kwargs):
+    context = super(MyView, self).get_context_data(**kwargs)
+    context['key'] = 'value'
+    return context
+{% endsyntax %}
+
+But much like the use of `self` on every python method, it is a syntactical inconvenience that provides a semantic benefit. Class based views are here taking advantage of an existing language mechanism, that already takes into account the subtleties of multiple inheritance. Multiple inheritance is a crucial feature in the usage and implementation of class based views, because composing functionality is mostly done with mixins. I don't like that, and I think it is an unfortunate consequence of choosing classes as the unit of behavior. But I can see how this is a reasonable compromise that honors the conventions of the language.
+
+The alternative proposed in the article essentially reimplements inheritance in an ad hoc manner, with the only advantage of being shorter. I am all for writing less code, but I think that *having to know* about less code is much better. Is it worth it to learn a new inheritance implementation just to shave off 2 lines?
+
+I am not a fan of the "any method can add to the context" feature either. It turns context into shared state that everyone can manipulate, instead of a value that is explicitly pieced together. Wouldn't it be better to ask this methods to compute things for you, and then piece those together into a context as easily as you can piece them into, say, a JSON object?
+
+And yet the fact that we can both feel constrained by the stock CBVs, and want so different things from an alternate implementation, is a testament to the truth of his message: **"write the actual code you want to write, then make the base class that enables it to work."**. Perhaps instead of accepting Django's compromises, I should go ahead and make my own.
+{% endarticle %}
+{% endblock %}
+

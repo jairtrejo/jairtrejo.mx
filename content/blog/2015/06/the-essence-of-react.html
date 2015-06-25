@@ -1,0 +1,32 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "The essence of React"
+    created: 2015-06-24 19:19:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+In the words of [Dan Abramov](https://twitter.com/dan_abramov):
+{% endexcerpt %}
+
+<center>
+    <blockquote class="twitter-tweet" data-conversation="none" lang="ja"><p lang="en" dir="ltr">React wouldn&#39;t be React without: (1) render() is idempotent, (2) setState is the only way to re-render, (3) components all the way down.</p>&mdash; Dan Abramov (@dan_abramov) <a href="https://twitter.com/dan_abramov/status/609852006107336704">2015, 6月 13</a></blockquote>
+    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <blockquote class="twitter-tweet" data-conversation="none" lang="ja"><p lang="en" dir="ltr">Take away (1), and there would be no hot reloading.</p>&mdash; Dan Abramov (@dan_abramov) <a href="https://twitter.com/dan_abramov/status/609852649568079872">2015, 6月 13</a></blockquote>
+    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <blockquote class="twitter-tweet" data-conversation="none" lang="ja"><p lang="en" dir="ltr">Take away (2), and you can have two-way bindings, but no way to trace data and rendering mistakes.</p>&mdash; Dan Abramov (@dan_abramov) <a href="https://twitter.com/dan_abramov/status/609852522702983168">2015, 6月 13</a></blockquote>
+    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <blockquote class="twitter-tweet" data-conversation="none" lang="ja"><p lang="en" dir="ltr">Take away (3) and you can have your HTML templates, but there would be no React Native.</p>&mdash; Dan Abramov (@dan_abramov) <a href="https://twitter.com/dan_abramov/status/609852162898821120">2015, 6月 13</a></blockquote>
+    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</center>
+
+And **not** the essence of React:
+
+<center>
+    <blockquote class="twitter-tweet" data-conversation="none" lang="ja"><p lang="en" dir="ltr">But hey, at least you have “virtual DOM” on your homepage!</p>&mdash; Dan Abramov (@dan_abramov) <a href="https://twitter.com/dan_abramov/status/609852862659731457">2015, 6月 13</a></blockquote>
+    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</center>
+
+{% endarticle %}
+{% endblock %}

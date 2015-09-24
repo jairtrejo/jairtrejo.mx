@@ -1,0 +1,24 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "Intermitent \"callback not found\" errors when reloading React Native app"
+    created: 2015-09-23 22:08:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+After running my first React Native app in an actual phone, I went back to the simulator to tweek it a bit more. However, this weird red messages kept popping up intermitently after reloading.
+{% endexcerpt %}
+
+<div class='figure'>
+    <img class='article-image centered' src='{{site.url}}/media/images/posts/callback-not-found.png' />
+</div>
+
+`"Callback with id 7:RCTAsyncLocalStorage.multi.Get() not found"` didn't tell me much. I had to disable bitcode compilation (don't ask, I have no idea either) and lower the iOS target version to make the app work in my phone, so I fiddled with that. It didn't work. I also tried restarting the simulator and then XCode itself. When I was about to restart the whole computer, I found the problem.
+
+It seems React Native gets very confused if you have two Chrome debugging sessions open at the same time. Closing one of them solved the issue.
+
+{% endarticle %}
+{% endblock %}
+
+

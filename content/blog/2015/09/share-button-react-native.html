@@ -1,0 +1,178 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "Adding a native iOS \"Share\" button to a React Native app"
+    created: 2015-09-24 01:28:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+
+I am working on a [React Native](https://facebook.github.io/react-native/) app, and I wanted to implement a "Share" button that opens the stock iOS sharing dialog.
+
+This is a very specific piece of functionality, so it is not included by default in React Native. However, the framework provides simple integration with existing ObjectiveC code and APIs, which is easy to use even for a complete iOS newbie like me.
+
+<div class='figure'>
+    <img class='article-image centered' src='{{site.url}}/media/images/posts/share-button.gif' />
+</div>
+
+{% endexcerpt %}
+
+## How it works in iOS
+The iOS native interface for doing sharing is the [`UIActivityViewController`](http://nshipster.com/uiactivityviewcontroller/). This is a modal dialog, shown at the bottom of the screen, that lets you share content with other apps in the device, or perform certain pre-defined actions. It provides ways to share arbitrary content, specify which apps to show in the UI, and create new types of activities.
+
+I found the following example of [setting it up in an iOS app](http://www.codingexplorer.com/add-sharing-to-your-app-via-uiactivityviewcontroller/):
+
+{% syntax objc %}
+- (IBAction)shareButton:(UIBarButtonItem *)sender
+{
+    NSString *textToShare = @"Look at this awesome website for aspiring iOS Developers!";
+    NSURL *myWebsite = [NSURL URLWithString:@"http://www.codingexplorer.com/"];
+
+    NSArray *objectsToShare = @[textToShare, myWebsite];
+
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:objectsToShare applicationActivities:nil];
+
+    NSArray *excludeActivities = @[UIActivityTypeAirDrop,
+                                   UIActivityTypePrint,
+                                   UIActivityTypeAssignToContact,
+                                   UIActivityTypeSaveToCameraRoll,
+                                   UIActivityTypeAddToReadingList,
+                                   UIActivityTypePostToFlickr,
+                                   UIActivityTypePostToVimeo];
+
+    activityVC.excludedActivityTypes = excludeActivities;
+
+    [self presentViewController:activityVC animated:YES completion:nil];
+}
+{% endsyntax %}
+
+First we need and array of objects to share. These can be Strings, URLs, Images, etc., but also any application specific object that conforms to the `<UIActivityItemSource>` interface.
+
+Then we create the actual `UIActivityViewController` instance, passing in the objects we want to share, and optionally a list of application specific activities. We can also specify an array of activities to exclude if they don't make sense for what we are trying to share.
+
+And finally we have to *present* the `UIViewController`. The first parameter is whether you want to animate the entrance, and the second one is an optional callback to be called on completion.
+
+## UIViewController v.s. UIView
+Now, my first instinct was to reach for [this section of the React Native docs](https://facebook.github.io/react-native/docs/native-components-ios.html#content), where they explain how to wrap a native component into a React one. My idea was to take the "Share dialog" `UIView` and figure out how to display it myself.
+
+However, upon close examination, we can see that `UIActivityViewController` is not a view, but a view controller. While a View is a rectangle that gets painted on the screen, a View Controller is the piece of code in charge of deciding when and how the views are drawn. That's why the iOS example calls `presentViewController` at the end; the `UIActivityViewController` then takes over dimming the screen and floating up the appropriate dialog.
+
+## How to call the Share dialog from a native module
+So, instead of embedding the Share UI as a React element we are going to just call a function that temporarily transfers control to it.
+
+Creating a native module is relatively simple, [as outlined here](https://facebook.github.io/react-native/docs/native-modules-ios.html#content). You just have to create a new Cocoa Touch Class like this:
+
+<div class='figure'>
+    <img class='article-image centered' src='{{site.url}}/media/images/posts/new-native-module.png' />
+</div>
+
+Then paste in some ObjectiveC boilerplate like this:
+
+{% syntax objc %}
+//
+//  RCTShareManager.h
+//
+
+#import <RCTBridgeModule.h>
+
+@interface RCTShareManager : NSObject <RCTBridgeModule>
+@end
+{% endsyntax %}
+
+&nbsp;
+
+{% syntax objc %}//
+//
+//  RCTShareManager.m
+//
+
+#import "RCTShareManager.h"
+
+@implementation RCTShareManager
+
+RCT_EXPORT_MODULE();
+
+RCT_EXPORT_METHOD(shareURL:(NSString *)URLString)
+{
+    // Some native code
+}
+
+@end
+{% endsyntax %}
+
+And you can access the shareURL method from JavaScript like this:
+
+{% syntax javascript %}
+var React = require('react-native');
+var ShareManager = React.NativeModules.ShareManager;
+
+// Somewhere in your component...
+
+function onPress(){
+    ShareManager.shareURL(someURL);
+};
+{% endsyntax %}
+
+Now, following the earlier example, we can fill in `UIActivityViewController`:
+
+{% syntax objc %}
+//
+//  RCTShareManager.m
+//
+
+#import "RCTShareManager.h"
+@import UIKit;
+
+@implementation RCTShareManager
+
+RCT_EXPORT_MODULE();
+RCT_EXPORT_METHOD(shareURL:(NSString *)URLString)
+{
+    NSArray *objectsToShare = @[[NSURL URLWithString:URLString]];
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:objectsToShare applicationActivities:nil];
+
+    UIViewController *rootController = UIApplication.sharedApplication.delegate.window.rootViewController;
+
+    [rootController presentViewController:activityVC animated:YES completion:nil];
+}
+
+@end
+{% endsyntax %}
+
+We are creating a `UIActivityViewController` and passing it to the `presentViewController` of the `rootViewController`. The `rootViewController` is the main controller that is in charge of presenting the whole application; I figured how to get ahold of it by reading [this Github Issue](https://github.com/facebook/react-native/issues/1148); perhaps there is a more convenient way.
+
+# Rendering in the main thread
+If we try to actually use the method we get a very scary looking error that begins like this:
+
+```
+This application is modifying the autolayout engine from a background thread, which can lead to engine corruption and weird crashes.  This will cause an exception in a future release.
+```
+
+And the actual window, after a long delay, looks like this:
+
+<div class='figure'>
+    <img class='article-image centered' src='{{site.url}}/media/images/posts/share-dialog-error.png' />
+</div>
+
+That happens because React Native executes your code in a background thread, so as to keep the main thread focused on rendering. This is a great idea because it keeps the app from stuttering, but since this is a visual change, we do need to schedule it to be executed in the main thread:
+
+{% syntax objc %}
+RCT_EXPORT_METHOD(shareURL:(NSString *)URLString)
+{
+    NSArray *objectsToShare = @[[NSURL URLWithString:URLString]];
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:objectsToShare applicationActivities:nil];
+
+    UIViewController *rootController = UIApplication.sharedApplication.delegate.window.rootViewController;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [rootController presentViewController:activityVC animated:YES completion:nil];
+    });
+}
+{% endsyntax %}
+
+You can read more on that in [this StackOverflow answer](http://stackoverflow.com/questions/28302019/getting-a-this-application-is-modifying-the-autolayout-engine-error).
+
+And there you go, you can display a native iOS Share dialog right inside your React Native application!
+{% endarticle %}
+{% endblock %}

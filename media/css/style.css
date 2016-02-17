@@ -24,6 +24,9 @@ body{
     color: #000;
     font-weight: bold;
 }
+.project-hero{
+    width: 100%;
+}
 img.face{
     height: 60px; width: 60px;
     border-radius: 50%;

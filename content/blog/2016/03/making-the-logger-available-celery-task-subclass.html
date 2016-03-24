@@ -1,0 +1,70 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "Making the logger available to custom celery Task subclasses"
+    created: 2016-03-24 00:35:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+Last week we upgraded our site from `django-celery` to stock `celery`. We were overdue, perhaps, but we weren't looking forward to change the tires of the rolling eight-wheeler.
+
+It went reasonably smooth, but we ran into trouble with a custom `celery.Task` subclass that needs access to the task logger.
+{% endexcerpt %}
+
+In the past, each celery task had its own logger, accessible by calling `self.get_logger`. Since a few versions past, [the best practice is to create a common logger for all of your tasks at the top of your module](http://docs.celeryproject.org/en/latest/userguide/tasks.html#logging). So we have:
+
+{% syntax python %}
+# some_package.tasks.py
+from celery.utils.log import get_task_logger
+
+import utils
+
+
+logger = get_task_logger(__name__)
+
+
+@app.task(base=utils.CustomTask)
+def do_stuff():
+    # Do some stuff
+    logger.info('I did some stuff')
+{% endsyntax %}
+
+We are using a custom subclass of `celery.Task` for some of our tasks, and it needs access to the logger:
+
+{% syntax python %}
+# utils.py
+import celery
+
+
+class CustomTask(celery.Task):
+    def do_custom_thing(self):
+        logger = self.get_logger()
+        logger.info('I did a custom thing')
+{% endsyntax %}
+
+But `self.get_logger` is no more. We could call `get_task_logger(__name__)` here, but that would mean the logger would be named `utils` rather than `some_package.tasks`, which is less than ideal.
+
+It would be nice to set `self.logger` inside `do_stuff`, but there is no self there. We could also set it as `do_stuff.logger`, but `do_stuff` is a `PromiseProxy` object, and thus read-only.
+
+But the `@app.task` decorator can help us. After diving into the source code, I realized that it turns its non-reserved keyword arguments into [properties of the class it generates on the fly](https://github.com/celery/celery/blob/master/celery/app/base.py#L381). So we can do:
+
+{% syntax python %}
+@app.task(base=utils.CustomTask, logger=logger)
+def do_stuff():
+    # Do some stuff
+    logger.info('I did some stuff')
+{% endsyntax %}
+
+And use `self.logger` in the subclass!
+
+{% syntax python %}
+class CustomTask(celery.Task):
+    def do_custom_thing(self):
+        logger = self.logger
+        logger.info('I did a custom thing')
+{% endsyntax %}
+
+The logger will be the correct one depending on the subclasser task.
+{% endarticle %}
+{% endblock %}

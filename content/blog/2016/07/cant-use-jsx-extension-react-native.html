@@ -1,0 +1,28 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "You can't use a jsx extension in React Native projects"
+    created: 2016-07-05 23:08:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+If you are getting a `Unable to resolve module` error when trying to `import` or `require` a local JSX file in a React Native project:
+{% endexcerpt %}
+
+{% syntax javascript %}
+import App from './components/App.jsx';
+{% endsyntax %}
+
+And the red screen suggestion doesn't work:
+
+<div class='figure'>
+    <a href='http://cfsl.net/tsunami/?p=829'><img class='article-image centered' alt="Unable to resolve module..." src='{{site.url}}/media/images/posts/unable-to-resolve-module.png' /></a>
+    <p class='caption'>Unable to resolve module...</p>
+</div>
+
+The actual problem is that [React Native doesn't support the JSX extension](https://github.com/facebook/react-native/commit/0893d07db197b4f78752f982abbc568c6c0c7419). Rename your file to `App.js` and it'll work just fine.
+
+{% endarticle %}
+{% endblock %}
+

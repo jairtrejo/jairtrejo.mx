@@ -1,6 +1,6 @@
 fabric
 cherrypy
 django<1.7
-Pygments<2.0
+Pygments
 beautifulsoup4
 git+https://github.com/jairtrejo/hyde.git

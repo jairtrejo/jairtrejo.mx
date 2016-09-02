@@ -1,0 +1,151 @@
+{% extends "_post.html" %}
+{% hyde
+    title: "The Madera framework"
+    created: 2016-07-10 15:23:00
+%}
+
+{% block article %}
+{% article %}
+{% excerpt %}
+Yes, sorry, I created a new JavaScript framework. But it's got a purpose, I promise.
+
+[Madera](https://github.com/jairtrejo/madera) is a front-end framework that lets you write pure business-logic functions, plain React Components, and promise-based HTTP requests, and wire them up using reactive primitives.
+
+It was born from a couple of projects (a React Native app, a Chrome extension) that I've been working on, and it's main goal for now is to let me explore my ideas about front-end development.
+
+You can [get it from npm](https://www.npmjs.com/package/madera) or [look at the code (and examples!) in Github](https://github.com/jairtrejo/madera). Let's take a deep dive into how it works.
+{% endexcerpt %}
+
+At the core of Madera lie the `state$` and `action$` [BaconJS](https://baconjs.github.io/) observables. You can think of the `action$` stream as a pipe that transports events: every time anything happens in the app it comes down that pipe. These events are represented by objects like this, which are called **actions**, with an **action type** and a payload:
+
+{% syntax javascript %}
+{
+    type: 'SEARCH',
+    payload: 'Spider-Man'
+}
+{% endsyntax %}
+
+The `state$` stream is also an observable, but it's more like a cell in a spreadsheet. It has a value, that is defined in terms of other cells. The "spreadsheet formula" for the `state$` stream would be something like this:
+
+{% syntax javascript %}
+state$ = reducers(action$, state$)
+{% endsyntax %}
+
+You'll notice that it's recursive, you can think of it as "The current value of the state is the old value of the state, combined with the latest action".
+
+That "combination" happens via reducers, pure, typically simple functions that describe how the state changes as a result of an action. They sound like event handlers, but they need not concern themselves with updating or coordinating things, just generating a new value. Moreover, they occupy a fixed, static place in the pipeline, so no concerns about stopping or starting to listen.
+
+The actual value of the state is an [ImmutableJS](https://facebook.github.io/immutable-js/) "tree" of sorts. It's a nested structure that can contain Maps, Lists or values, similar to a JSON object.
+
+The Madera repo includes a [TypeAhead example](https://github.com/jairtrejo/madera/tree/master/examples/typeahead). It's a simple application that lets you search the [Marvel API](http://developer.marvel.com). I'll be using snippets of it as an example.
+
+
+Let's start by looking at it's [reducer factory](https://github.com/jairtrejo/madera/blob/master/examples/typeahead/src/reducers/search.js):
+
+{% syntax javascript %}
+import Immutable from 'immutable';
+import { explode } from 'madera';
+
+
+export default function searchReducer(action$){
+    let {
+        init$,
+        search$,
+        searchResults$,
+        searchError$,
+        picked$
+    } = explode(action$);
+
+    return [
+        init$, state =>
+            state.set('search', Immutable.Map({
+                term: '',
+                error: null,
+                picked: null,
+                results: null
+            })),
+
+        search$, (state, term) =>
+            state.set('search', Immutable.Map({
+                term,
+                error: null,
+                picked: null,
+                results: null
+            })),
+
+        searchResults$, (state, results) =>
+            state.setIn(['search', 'results'], results)
+                 .setIn(['search', 'error'], null),
+
+        searchError$, (state, error) =>
+            state.setIn(['search', 'error'], "The Marvel API seems to be unavailable")
+                 .setIn(['search', 'results'], null),
+
+        picked$, (state, picked) =>
+            state.setIn(['search', 'picked'], picked)
+                 .setIn(['search', 'results'], null)
+                 .setIn(['search', 'error'], null)
+    ]
+}
+{% endsyntax %}
+
+A Madera reducer factory is a function that takes the `action$` stream and returns a mapping from actions to reducers, of the form `[stream1$, reducer, stream2$, reducer...]`.
+
+We start by calling `explode`, which separates the `action$` stream into individual streams that only contain actions of a particular type. ES6 destructuring makes it look very neat. We then generate the mapping, essentially telling to Madera "when events of this action type happen, use this function to figure out what the new state should be." For this example:
+
+- When the app starts we initialize everyting to `null` or empty values.
+- When a search term is entered we save it and wipe the previous search results.
+- And when results come back we set them in the appropriate place.
+
+And then we do similar things when an error happens or a search result is picked.
+
+You may have noticed that all these functions return a new value rather than editing the state tree in place. But this incurs very little overhead because immutable data structures are optimized for this use case, and avoid any deep copies of the whole structure.
+
+This takes care of keeping your source of truth state tree up-to-date wehenever things happen. But we also need to render that state as a UI. Fortunately React components also work in that same spirit of "just rendering the current state": we can think of React components as pure functions that take a value (a piece of the current state) and output another value (a lightweight representation of the DOM).
+
+{% syntax jsx %}
+export default function Results(props){
+    const { results, selected, onPick } = props;
+
+    let content = null;
+
+    if (results === null) {
+        content = <Spinner spinnerName="three-bounce"/>
+    } else if (results.length === 0) {
+        content = <p>No matches found</p>;
+    } else {
+        content = results.slice(0, 5).map(
+            (r, idx) => (
+                <Result key={ r.id }
+                        result={ r }
+                        selected={ idx === selected }
+                        onPick={ onPick }/>
+            ));
+    }
+
+    return (
+        <div className="popover results">
+            { content }
+        </div>
+    );
+}
+{% endsyntax %}
+
+In this case, there is no code here to add or remove things from the list of search results: we just need to "render a list" and React takes care of doing the actual minimal DOM updating when the number of elements changes.
+
+- So if we have this pure function from state to UI, it seems straight-forward to connect it to the end of the state pipe. For that we use the `connectComponent` function.
+- It takes two functions. The first one should take the state$ stream and return an object that maps pieces of that state to React props. In this case it's simple to extract the "quizlet" element and pass that as a prop named quizlet.
+- The second function closes the loop by providing a way for the component to feed actions back into the system. React components typically communicate with the rest of the world by calling callbacks, so this function should return a mapping from a stream of events coming from those callbacks, to streams of actions to be fed into the action$ stream.
+- Check out the onSearch method and how it uses `debounce` to throttle how frequently updates to the search term are communicated to the rest of the app. When doing this sort of pipelining we have access to the full, rich library of BaconJS stream combinators, so we can do very neat coordination.
+- So far we have a nice interactive loop: there is an initial state that is rendered into a UI by React, and user interactions with that UI come in to the app as actions. The stream of those actions gets reduced into an ever-changing state, but since our React components are pure functions from a static state to the UI, the app is always up to date.
+- The missing piece is making HTTP requests and communicating with external sources. It's clear that the results from those requests can come into the app as actions, but it's hard to decide where exactly those requests should be initiated.
+- Different frameworks attack this problem in different ways. For instance, a common pattern to have the code that communicates that the user clicked the "login" button (by dispatching an action), is also responsible for initiating the logIn request. That is messy and sprinkles calls to external services around many places.
+- There are also other approaches like GraphQL/Relay, in which the React components specify which data they need, so they can be sort of "rendered" into a query that then is made against the server. For "write" type queries, you explicitly call a function from the UI. I am not comfortable with that level of coupling between the React Components and the HTTP operations. It also blurs the line between local state and remote HTTP state, and requires a complete overhaul of your backend to support it.
+- So I thought about how nice the React integration is, and how it consumes state and outputs actions. And I decided to build an API layer that works just like that: from the current state of the app, it figures out whether it needs to make an API call, and when it does it reports back the results as actions.
+- This layer is written in the form of Resources: objects that expose a set of operations. When you call those operations the result is meant to be a Promise.
+- To wire that up Madera has a `connectResource` method, very similar to `connectComponent`.
+- It takes two functions: the first one maps the current state to an argument to be used when calling each operation. Note the use of filter so we only call the operation when we deem it necessary; In the case of Quizlet Search this is simple: if there is a current search term, but no current search results, we need to call the Quizlet API with the provided term.
+- The second function maps the results of those operations to action streams. It's important to also communicate the error cases, so if the promise is rejected that has it's own action type, and can be dealt with like any action.
+
+{% endarticle %}
+{% endblock %}

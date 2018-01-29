@@ -1,0 +1,35 @@
+{% extends "skeleton/_base.html" %}
+
+{% hyde
+    title: "VR projects"
+%}
+
+{% block content %}
+{% markdown %}
+# {{page.title}}
+
+In 2017 I started working on VR Projects! I find it very appealing to be able to transport people to a whole new world of my own making.
+ Right now I'm focused on my first VR game, and have a couple side projects on the works.
+
+**Fun with trains** is a game about playing with your new train set on Christmas morning. Every Christmas you receive a new piece, which gives you a new puzzle to solve. You have to be quick, because your little sister is a bit impatient and might start the train before you are done.
+
+<center>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/JaPQxM3xgm4" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+</center>
+
+*Fun with trains* started as my final project for [Upload's Unity VR Course](https://uploadedu.com/p/vr-development-with-unity-sf). I attended the first edition of the class, and I had great fun and learned a ton about developing 3D experiences with Unity. I had some experience with 3D Computer Graphics from a DirectX seminar back in high-school, which helped with the fundamentals, but it's great to have learned a full modern toolset. In terms of assets, Google Blocks came out around that time, which give me the chance to make [the 3D assets myself](https://poly.google.com/user/9dC3NYbtQwd). Judges loved it on Demo Night, and it won first prize!
+
+<div class='figure'>
+    <img class='article-image centered' src='{{site.url}}/media/images/first-place-upload.jpg' width="560" />
+</div>
+
+For that same class, my mid-term project was a little game about pushing commuters out of the way in a packed subway station. The ragdoll physics are hilarious, I might develop it into a proper game one day!
+
+<center>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/-upBmn3nf1o" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+</center>
+
+I'll keep updating this page as I keep working on new, fun VR stuff. Stay tuned!
+
+{% endmarkdown %}
+{% endblock %}
